@@ -1,2 +1,0 @@
-from image_processor.image_processor import ImageProcessorParent
-from image_processor.image_resize import ImageResize

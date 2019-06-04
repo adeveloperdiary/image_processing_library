@@ -1,10 +1,8 @@
-import numpy as np
-import cv2
-from image_processor.image_resize import ImageResize
+from core.process_executor import DeepLearningFrameworkAutomation
+import json
 
-image = cv2.imread("/Users/home/Documents/code/dl4cv/datasets/animals/cats/cats_00001.jpg")
+with open("config.json", "r") as read_file:
+    config = json.load(read_file)
 
-ir = ImageResize(300, 300)
-image = ir.process1(image)
-cv2.imshow("", image)
-cv2.waitKey(0)
+framework = DeepLearningFrameworkAutomation(config=config)
+framework.execute()
