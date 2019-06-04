@@ -6,17 +6,35 @@
       "properties": {
         "type": "image_dir",
         "path": "/Users/home/Documents/code/dl4cv/datasets/animals/",
-        "output": "processed_data",
+        "data": "data",
+        "labels": "labels",
         "pipeline": [
           {
             "processor": "processors.image_processor.ImageResize",
-            "name": "utils.image_processor.ImageResize",
+            "name": "Image Resize",
             "properties": {
               "width": 100,
               "height": 100
             }
+          },
+          {
+            "processor": "processors.image_processor.ImageToArrayPreprocessor",
+            "name": "Image To Array Preprocessor",
+            "properties": {
+              "normalize_image": true
+            }
           }
         ]
+      }
+    },
+    {
+      "processor": "processors.train_test_split.TrainTestSplit",
+      "name": "Train Test Split",
+      "properties": {
+        "data": "data",
+        "labels": "labels",
+        "test_size": 0.25,
+        "label_to_number": true
       }
     }
   ]

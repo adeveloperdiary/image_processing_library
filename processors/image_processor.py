@@ -19,8 +19,23 @@ class ImageResize(ImageProcessor):
 
 @Step.register
 class ImageToArrayPreprocessor(ImageProcessor):
-    def __init__(self, dataFormat=None):
-        self.dataFormat = dataFormat
+    def __init__(self, properties={}):
+
+        if "dataFormat" in properties:
+            self.dataFormat = properties["dataFormat"]
+        else:
+            self.dataFormat = None
+
+        if "normalize_image" in properties and properties["normalize_image"]:
+            self.normalize_image = True
+        else:
+            self.normalize_image = False
 
     def process(self, image):
-        return img_to_array(image, data_format=self.dataFormat)
+        # Converts int to float32
+        image = img_to_array(image, data_format=self.dataFormat)
+
+        if self.normalize_image:
+            image = image / 255.0
+
+        return image

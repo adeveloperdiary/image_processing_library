@@ -39,7 +39,7 @@ class ImageLoader(Step):
         data = []
         labels = []
         widgets = [
-            '[INFO] Loading Images - ',
+            '[ImageLoader] Loading Images - ',
             progressbar.Bar('#', '[', ']'),
             ' [', progressbar.Percentage(), '] ',
             '[', progressbar.Counter(format='%(value)02d/%(max_value)d'), '] '
@@ -83,4 +83,7 @@ class ImageLoader(Step):
         if properties["type"] == "image_dir":
             data, labels = self.load_images_from_fs(properties["path"])
 
-        return data, labels
+        container[properties["data"]] = data
+        container[properties["labels"]] = labels
+
+        return container
