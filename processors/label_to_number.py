@@ -13,4 +13,4 @@ class LabelToNumber(Step):
         trainY = lb.fit_transform(container[properties["trainY"]])
         testY = lb.transform(container[properties["testY"]])
 
-        return trainY, testY
+        return container

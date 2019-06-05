@@ -1,6 +1,10 @@
 {
   "global": {
-    "epochs": 40
+    "epochs": 10,
+    "trainX": "trainX",
+    "trainY": "trainY",
+    "testX": "testX",
+    "testY": "testY"
   },
   "steps": [
     {
@@ -16,8 +20,8 @@
             "processor": "processors.image_processor.ImageResize",
             "name": "Image Resize",
             "properties": {
-              "width": 100,
-              "height": 100
+              "width": 32,
+              "height": 32
             }
           },
           {
@@ -46,8 +50,8 @@
       "properties": {
         "model": "[Conv2D(32,3,same)=>Activation(relu)]*2->MaxPooling2D(2)->Dropout(0.25)->[Conv2D(64,3,same)=>Activation(relu)=>BatchNormalization(-1)]*2->MaxPooling2D(2)->Dropout(0.25)->Flatten()->Dense(512)->Activation(relu)->BatchNormalization()->Dropout(0.5)->Dense()->Activation(softmax)",
         "output": "model",
-        "width": 100,
-        "height": 100,
+        "width": 32,
+        "height": 32,
         "color_channel": 3,
         "target_classes": 3,
         "model_summary": false
@@ -66,7 +70,29 @@
           "nesterov": true
         },
         "loss": "categorical_crossentropy",
-        "metrics": "accuracy"
+        "metrics": "accuracy",
+        "output": "model"
+      }
+    },
+    {
+      "processor": "processors.training.DefaultTraining",
+      "name": "Default Training",
+      "properties": {
+        "model": "model",
+        "output": "model_output",
+        "batch_size": 64,
+        "verbose": 1
+      }
+    },
+    {
+      "processor": "processors.evaluate.DefaultModelEvaluation",
+      "name": "Default Model Evaluation",
+      "properties": {
+        "model_output": "model_output",
+        "model": "model",
+        "batch_size": 128,
+        "labels": "labels",
+        "plot_loc": "output/plots/vgg.png"
       }
     }
   ]

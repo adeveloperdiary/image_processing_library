@@ -11,7 +11,7 @@ class TrainTestSplit(Step):
     def __init__(self):
         pass
 
-    def process(self, global_properties={},properties={}, container={}):
+    def process(self, global_properties={}, properties={}, container={}):
         (trainX, testX, trainY, testY) = train_test_split(container[properties["data"]], container[properties["labels"]],
                                                           test_size=properties["test_size"])
 
@@ -20,9 +20,9 @@ class TrainTestSplit(Step):
             trainY = lb.fit_transform(trainY)
             testY = lb.transform(testY)
 
-        container["trainX"] = trainX
-        container["testX"] = testX
-        container["trainY"] = trainY
-        container["testY"] = testY
+        container[global_properties["trainX"]] = trainX
+        container[global_properties["testX"]] = testX
+        container[global_properties["trainY"]] = trainY
+        container[global_properties["testY"]] = testY
 
         return container
