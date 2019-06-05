@@ -36,6 +36,19 @@
         "test_size": 0.25,
         "label_to_number": true
       }
+    },
+    {
+      "processor": "processors.custom_model.CustomModel",
+      "name": "Custom Model",
+      "properties": {
+        "model": "[Conv2D(32,3,same)=>Activation(relu)]*2->MaxPooling2D(2)->Dropout(0.25)->[Conv2D(64,3,same)=>Activation(relu)=>BatchNormalization(-1)]*2->MaxPooling2D(2)->Dropout(0.25)->Flatten()->Dense(512)->Activation(relu)->BatchNormalization()->Dropout(0.5)->Dense()->Activation(softmax)",
+        "output": "model",
+        "width": 100,
+        "height": 100,
+        "color_channel": 3,
+        "target_classes": 3,
+        "model_summary": false
+      }
     }
   ]
 }
