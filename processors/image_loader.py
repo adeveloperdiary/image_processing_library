@@ -71,7 +71,7 @@ class ImageLoader(Step):
 
         return image
 
-    def process(self, properties={}, container={}):
+    def process(self, global_properties={}, properties={}, container={}):
 
         pipeline = properties["pipeline"]
 

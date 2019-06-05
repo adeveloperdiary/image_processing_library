@@ -16,7 +16,7 @@ class DeepLearningFrameworkAutomation:
             # START - Execute the Step
             class_loader = FrameworkUtility.get_instance(step["processor"])
             processor = class_loader()
-            self.container = processor.process(step["properties"], self.container)
+            self.container = processor.process(self.master_config["global"], step["properties"], self.container)
             # END - Execute the Step
 
         return self.container

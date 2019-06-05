@@ -1,5 +1,3 @@
-import numpy as np
-import cv2
 import abc
 
 
@@ -10,8 +8,8 @@ class Step(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def process(self, properties={}, container={}):
-        return
+    def process(self, global_properties={}, properties={}, container={}):
+        return container
 
 
 class ImageProcessor(abc.ABC):
@@ -22,4 +20,4 @@ class ImageProcessor(abc.ABC):
 
     @abc.abstractmethod
     def process(self, image):
-        return
+        return image

@@ -1,4 +1,7 @@
 {
+  "global": {
+    "epochs": 40
+  },
   "steps": [
     {
       "processor": "processors.image_loader.ImageLoader",
@@ -48,6 +51,22 @@
         "color_channel": 3,
         "target_classes": 3,
         "model_summary": false
+      }
+    },
+    {
+      "processor": "processors.optimization.DefaultOptimization",
+      "name": "Default Optimization",
+      "properties": {
+        "model": "model",
+        "optimization": {
+          "algorithm": "stochastic_gradient_descent",
+          "learning_rate": 0.01,
+          "decay": 0.01,
+          "momentum": 0.9,
+          "nesterov": true
+        },
+        "loss": "categorical_crossentropy",
+        "metrics": "accuracy"
       }
     }
   ]
