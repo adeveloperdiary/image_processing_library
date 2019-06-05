@@ -16,7 +16,7 @@ class DefaultOptimization(Step):
         if optimization["algorithm"] == "stochastic_gradient_descent":
             optimizer = SGD()
 
-            if "lr" in optimization:
+            if "learning_rate" in optimization:
                 optimizer.lr = optimization["learning_rate"]
 
             if "momentum" in optimization:

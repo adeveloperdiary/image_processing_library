@@ -53,7 +53,11 @@ class CustomModel(Step):
             elif name == "Activation":
                 model.add(Activation(params))
             elif name == "MaxPooling2D":
-                model.add(MaxPooling2D(pool_size=(int(params), int(params))))
+                if params.find(",") > -1:
+                    params = params.split(",")
+                    model.add(MaxPooling2D(pool_size=(int(params[0]), int(params[0])), strides=(int(params[1]), int(params[1]))))
+                else:
+                    model.add(MaxPooling2D(pool_size=(int(params), int(params))))
             elif name == "BatchNormalization":
                 if params:
                     model.add(BatchNormalization(axis=int(params)))

@@ -22,7 +22,7 @@ class DefaultTraining(Step):
 
         container[properties["output"]] = model_output
 
-        if "save_model" in properties:
+        if "save_model"  in properties:
             model.save(properties["save_model"])
 
         return container
