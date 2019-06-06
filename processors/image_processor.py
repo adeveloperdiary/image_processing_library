@@ -13,8 +13,28 @@ class ImageResize(ImageProcessor):
         else:
             self.interpolation = cv2.INTER_AREA
 
+        if "crop" in properties and properties["crop"]:
+            self.crop = True
+        else:
+            self.crop = False
+
     def process(self, image):
-        return cv2.resize(image, (self.width, self.height), interpolation=self.interpolation)
+
+        if self.crop:
+            (h, w) = image.shape[:2]
+            dW = 0
+            dH = 0
+
+            if w < h:
+                dH = int((image.shape[0] - self.height) / 2.0)
+            else:
+                dW = int((image.shape[1] - self.width) / 2.0)
+
+            image = image[dH:h - dH, dW:w - dW]
+
+        image = cv2.resize(image, (self.width, self.height), interpolation=self.interpolation)
+
+        return image
 
 
 @Step.register

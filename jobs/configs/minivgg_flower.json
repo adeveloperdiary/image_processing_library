@@ -1,6 +1,6 @@
 {
   "global": {
-    "epochs": 10,
+    "epochs": 100,
     "trainX": "trainX",
     "trainY": "trainY",
     "testX": "testX",
@@ -12,7 +12,7 @@
       "name": "Image Loader",
       "properties": {
         "type": "image_dir",
-        "path": "/home/home/Documents/synch/datasets/animals",
+        "path": "/home/home/Documents/synch/datasets/17flowers/jpg/",
         "data": "data",
         "labels": "labels",
         "pipeline": [
@@ -20,9 +20,9 @@
             "processor": "processors.image_processor.ImageResize",
             "name": "Image Resize",
             "properties": {
-              "width": 32,
-              "height": 32,
-              "crop": false
+              "width": 64,
+              "height": 64,
+              "crop": true
             }
           },
           {
@@ -51,10 +51,10 @@
       "properties": {
         "model": "[Conv2D(32,3,same)=>Activation(relu)]*2->MaxPooling2D(2)->Dropout(0.25)->[Conv2D(64,3,same)=>Activation(relu)=>BatchNormalization(-1)]*2->MaxPooling2D(2)->Dropout(0.25)->Flatten()->Dense(512)->Activation(relu)->BatchNormalization()->Dropout(0.5)->Dense()->Activation(softmax)",
         "output": "model",
-        "width": 32,
-        "height": 32,
+        "width": 64,
+        "height": 64,
         "color_channel": 3,
-        "target_classes": 3,
+        "target_classes": 17,
         "model_summary": false
       }
     },
@@ -65,10 +65,10 @@
         "model": "model",
         "optimization": {
           "algorithm": "stochastic_gradient_descent",
-          "learning_rate": 0.01,
+          "learning_rate": 0.05,
           "_decay": 0.01,
-          "momentum": 0.9,
-          "nesterov": true
+          "_momentum": 0.9,
+          "_nesterov": true
         },
         "loss": "categorical_crossentropy",
         "metrics": "accuracy",
@@ -81,9 +81,18 @@
       "properties": {
         "model": "model",
         "output": "model_output",
-        "batch_size": 64,
+        "batch_size": 32,
         "verbose": 1,
-        "callbacks": [
+        "augmentation": {
+          "rotation_range": 30,
+          "width_shift_range": 0.1,
+          "height_shift_range": 0.1,
+          "shear_range": 0.2,
+          "zoom_range": 0.2,
+          "horizontal_flip": true,
+          "fill_mode": "nearest"
+        },
+        "_callbacks": [
           {
             "type": "decay",
             "method": "callbacks.decay.step_decay"
@@ -110,9 +119,9 @@
       "properties": {
         "model_output": "model_output",
         "model": "model",
-        "batch_size": 128,
+        "batch_size": 32,
         "labels": "labels",
-        "plot_loc": "output/plots/vgg.png",
+        "plot_loc": "output/plots/minivgg_flower17.png",
         "_load_model": "output/model/shallownet_weights.hdf5"
       }
     }

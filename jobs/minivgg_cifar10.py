@@ -2,7 +2,7 @@ from core.process_executor import DeepLearningFrameworkAutomation
 import json
 from keras.datasets import cifar10
 
-with open("configs/minivgg.json", "r") as read_file:
+with open("configs/minivgg_cifar10.json", "r") as read_file:
     config = json.load(read_file)
 
 ((trainX, trainY), (testX, testY)) = cifar10.load_data()

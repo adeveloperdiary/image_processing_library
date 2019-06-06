@@ -2,6 +2,7 @@ from utils.parents import Step
 from keras.callbacks import LearningRateScheduler, ModelCheckpoint
 from utils.framework_utils import FrameworkUtility
 import os
+from keras.preprocessing.image import ImageDataGenerator
 
 
 @Step.register
@@ -39,10 +40,24 @@ class DefaultTraining(Step):
         else:
             callbacks = None
 
-        model_output = model.fit(trainX, trainY, validation_data=(testX, testY), batch_size=properties["batch_size"],
-                                 epochs=global_properties["epochs"],
-                                 callbacks=callbacks,
-                                 verbose=properties["verbose"])
+        if "augmentation" in properties:
+
+            augmentation_def = properties["augmentation"]
+
+            augmentation = ImageDataGenerator(rotation_range=augmentation_def["rotation_range"],
+                                              width_shift_range=augmentation_def["width_shift_range"],
+                                              height_shift_range=augmentation_def["height_shift_range"], shear_range=augmentation_def["shear_range"],
+                                              zoom_range=augmentation_def["zoom_range"],
+                                              horizontal_flip=augmentation_def["horizontal_flip"], fill_mode=augmentation_def["fill_mode"])
+            model_output = model.fit_generator(augmentation.flow(trainX, trainY, batch_size=properties["batch_size"]),
+                                               validation_data=(testX, testY), steps_per_epoch=len(trainX) // properties["batch_size"],
+                                               epochs=global_properties["epochs"], callbacks=callbacks, verbose=properties["verbose"])
+
+        else:
+            model_output = model.fit(trainX, trainY, validation_data=(testX, testY), batch_size=properties["batch_size"],
+                                     epochs=global_properties["epochs"],
+                                     callbacks=callbacks,
+                                     verbose=properties["verbose"])
 
         container[properties["output"]] = model_output
 
