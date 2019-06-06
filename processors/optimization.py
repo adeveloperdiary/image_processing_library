@@ -12,26 +12,27 @@ class DefaultOptimization(Step):
     def process(self, global_properties={}, properties={}, container={}):
         model = container[properties["model"]]
 
-        optimization = properties["optimization"]
+        optimization_def = properties["optimization"]
 
-        if optimization["algorithm"] == "stochastic_gradient_descent":
+        if optimization_def["algorithm"] == "stochastic_gradient_descent":
             optimizer = SGD()
 
-            if "momentum" in optimization:
-                optimizer.momentum = optimization["momentum"]
-
-            if "decay" in optimization:
-                optimizer.decay = optimization["decay"] / global_properties["epochs"]
-
-            if "nesterov" in optimization:
-                optimizer.nesterov = optimization["nesterov"]
+            if "nesterov" in optimization_def:
+                optimizer.nesterov = optimization_def["nesterov"]
 
         metrics = properties["metrics"].split(",")
 
         model.compile(loss=properties["loss"], optimizer=optimizer, metrics=metrics)
 
-        if "learning_rate" in optimization:
-            K.set_value(model.optimizer.lr, optimization["learning_rate"])
+        if optimization_def["algorithm"] == "stochastic_gradient_descent":
+            if "learning_rate" in optimization_def:
+                K.set_value(model.optimizer.lr, optimization_def["learning_rate"])
+
+            if "momentum" in optimization_def:
+                K.set_value(model.optimizer.momentum, optimization_def["momentum"])
+
+            if "decay" in optimization_def:
+                K.set_value(model.optimizer.decay, optimization_def["decay"] / global_properties["epochs"])
 
         container[properties["output"]] = model
 

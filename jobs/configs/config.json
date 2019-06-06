@@ -95,8 +95,9 @@
           {
             "type": "checkpoint",
             "path": "output/checkpoint",
-            "filename": "animals_best_weights.hdf5".
-
+            "monitor": "val_loss",
+            "filename": "animals_best_weights.hdf5",
+            "save_best_only": true
           }
         ],
         "_save_model": "output/model/shallownet_weights.hdf5"

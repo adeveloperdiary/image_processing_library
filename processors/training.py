@@ -32,7 +32,9 @@ class DefaultTraining(Step):
 
                     cls = FrameworkUtility.get_instance(callback_def["class"])
                     callbacks.append(cls(figPath, jsonPath))
-
+                elif callback_def["type"] == "checkpoint":
+                    callbacks.append(ModelCheckpoint(callback_def["path"] + "/" + callback_def["filename"], monitor=callback_def["monitor"],
+                                                     save_best_only=callback_def["save_best_only"], verbose=properties["verbose"]))
 
         else:
             callbacks = None
