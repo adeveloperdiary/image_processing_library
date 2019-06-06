@@ -12,7 +12,7 @@
       "name": "Image Loader",
       "properties": {
         "type": "image_dir",
-        "path": "/Users/home/Documents/code/dl4cv/datasets/animals/",
+        "path": "/home/home/Documents/synch/datasets/animals",
         "data": "data",
         "labels": "labels",
         "pipeline": [
@@ -65,7 +65,7 @@
         "optimization": {
           "algorithm": "stochastic_gradient_descent",
           "learning_rate": 0.01,
-          "decay": 0.01,
+          "_decay": 0.01,
           "momentum": 0.9,
           "nesterov": true
         },
@@ -81,7 +81,25 @@
         "model": "model",
         "output": "model_output",
         "batch_size": 64,
-        "verbose": 1
+        "verbose": 1,
+        "callbacks": [
+          {
+            "type": "decay",
+            "method": "callbacks.decay.step_decay"
+          },
+          {
+            "type": "training_monitor",
+            "class": "callbacks.trainingmonitor.TrainingMonitor",
+            "path": "output/checkpoint"
+          },
+          {
+            "type": "checkpoint",
+            "path": "output/checkpoint",
+            "filename": "animals_best_weights.hdf5".
+
+          }
+        ],
+        "_save_model": "output/model/shallownet_weights.hdf5"
       }
     },
     {
@@ -92,7 +110,8 @@
         "model": "model",
         "batch_size": 128,
         "labels": "labels",
-        "plot_loc": "output/plots/vgg.png"
+        "plot_loc": "output/plots/vgg.png",
+        "_load_model": "output/model/shallownet_weights.hdf5"
       }
     }
   ]

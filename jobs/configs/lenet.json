@@ -21,7 +21,7 @@
       "processor": "processors.custom_model.CustomModel",
       "name": "Custom Model",
       "properties": {
-        "model": "Conv2D(20,5,same)->Activation(relu)->MaxPooling2D(2,2)->Conv2D(50,5,same)->Activation(relu)->Flatten()->Dense(500)->Activation(relu)->Dense()->Activation(softmax)\n",
+        "model": "Conv2D(20,5,same)->Activation(relu)->MaxPooling2D(2,2)->Flatten()->Dense(500)->Activation(relu)->Dense()->Activation(softmax)",
         "output": "model",
         "width": 28,
         "height": 28,

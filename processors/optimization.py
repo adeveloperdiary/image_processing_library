@@ -1,5 +1,6 @@
 from keras.optimizers import SGD
 from utils.parents import Step
+from keras import backend as K
 
 
 @Step.register
@@ -16,9 +17,6 @@ class DefaultOptimization(Step):
         if optimization["algorithm"] == "stochastic_gradient_descent":
             optimizer = SGD()
 
-            if "learning_rate" in optimization:
-                optimizer.lr = optimization["learning_rate"]
-
             if "momentum" in optimization:
                 optimizer.momentum = optimization["momentum"]
 
@@ -31,6 +29,9 @@ class DefaultOptimization(Step):
         metrics = properties["metrics"].split(",")
 
         model.compile(loss=properties["loss"], optimizer=optimizer, metrics=metrics)
+
+        if "learning_rate" in optimization:
+            K.set_value(model.optimizer.lr, optimization["learning_rate"])
 
         container[properties["output"]] = model
 

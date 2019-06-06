@@ -12,7 +12,7 @@ class DefaultModelEvaluation(Step):
         pass
 
     def process(self, global_properties={}, properties={}, container={}):
-        labelNames = np.unique(container[properties["labels"]]).tolist()
+        labelNames = np.unique(container[properties["labels"]]).astype(str).tolist()
 
         testX = container[global_properties["testX"]]
         testY = container[global_properties["testY"]]
