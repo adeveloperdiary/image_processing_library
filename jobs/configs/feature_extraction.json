@@ -23,20 +23,21 @@
               "properties": {
                 "width": 224,
                 "height": 224,
-                "crop": true
+                "crop": false
               }
             },
             {
               "processor": "processors.image_processor.ImageToArrayPreprocessor",
               "name": "Image To Array Preprocessor",
               "properties": {
-                "normalize_image": true
+                "COMMENT": "dont normalize for feature extraction. It will be done by the code automatically",
+                "normalize_image": false
               }
             }
           ]
         },
         "image_store": {
-          "output": "/media/home/1TB_Disk/data/vgg16_features.hdf5",
+          "output": "/media/1TB_Disk/data/vgg16_features.hdf5",
           "key": "features",
           "buffer_size": 1000
         },
@@ -48,7 +49,7 @@
       "name": "Image Loader",
       "properties": {
         "type": "hdf5",
-        "path": "/media/home/1TB_Disk/data/vgg16_features.hdf5",
+        "path": "/media/1TB_Disk/data/vgg16_features.hdf5",
         "db": "db",
         "train_test_split": {
           "labels": "labels",
