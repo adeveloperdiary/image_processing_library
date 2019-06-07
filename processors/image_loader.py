@@ -5,6 +5,7 @@ import progressbar
 # import colorama
 from utils.parents import Step
 from utils.framework_utils import FrameworkUtility
+import h5py
 
 
 @Step.register
@@ -73,17 +74,27 @@ class ImageLoader(Step):
 
     def process(self, global_properties={}, properties={}, container={}):
 
-        pipeline = properties["pipeline"]
+        if "pipeline" in properties:
+            pipeline = properties["pipeline"]
 
-        for image_processor in pipeline:
-            class_loader = FrameworkUtility.get_instance(image_processor["processor"])
-            img_process = class_loader(image_processor["properties"])
-            self.image_processors.append(img_process)
+            for image_processor in pipeline:
+                class_loader = FrameworkUtility.get_instance(image_processor["processor"])
+                img_process = class_loader(image_processor["properties"])
+                self.image_processors.append(img_process)
 
         if properties["type"] == "image_dir":
             data, labels = self.load_images_from_fs(properties["path"])
+            container[properties["data"]] = data
+            container[properties["labels"]] = labels
+        elif properties["type"] == "hdf5":
+            db = h5py.File(properties["path"], "r")
 
-        container[properties["data"]] = data
-        container[properties["labels"]] = labels
+            if "train_test_split" in properties:
+                train_test_split_def = properties["train_test_split"]
+
+                index = int(db[train_test_split_def["labels"]].shape[0] * (1.0 - (train_test_split_def["test_percent"] / 100.0)))
+                container[train_test_split_def["index"]] = index
+
+            container[properties["db"]] = db
 
         return container

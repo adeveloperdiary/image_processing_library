@@ -1,0 +1,66 @@
+{
+  "global": {
+    "epochs": 10,
+    "trainX": "trainX",
+    "trainY": "trainY",
+    "testX": "testX",
+    "testY": "testY"
+  },
+  "steps": [
+    {
+      "processor": "processors.feature_extractor.DefaultFeatureExtractor",
+      "name": "Default Feature Extractor",
+      "properties": {
+        "image_loading": {
+          "type": "image_dir",
+          "path": "/home/home/Documents/synch/datasets/animals",
+          "processing": "batch",
+          "batch_size": 32,
+          "pipeline": [
+            {
+              "processor": "processors.image_processor.ImageResize",
+              "name": "Image Resize",
+              "properties": {
+                "width": 224,
+                "height": 224,
+                "crop": true
+              }
+            },
+            {
+              "processor": "processors.image_processor.ImageToArrayPreprocessor",
+              "name": "Image To Array Preprocessor",
+              "properties": {
+                "normalize_image": true
+              }
+            }
+          ]
+        },
+        "image_store": {
+          "output": "/media/home/1TB_Disk/data/vgg16_features.hdf5",
+          "key": "features",
+          "buffer_size": 1000
+        },
+        "pre_trained_model": "VGG16"
+      }
+    },
+    {
+      "processor": "processors.image_loader.ImageLoader",
+      "name": "Image Loader",
+      "properties": {
+        "type": "hdf5",
+        "path": "/media/home/1TB_Disk/data/vgg16_features.hdf5",
+        "db": "db",
+        "train_test_split": {
+          "labels": "labels",
+          "test_percent": 25,
+          "index": "train_test_split_index"
+        }
+      }
+    },
+    {
+      "processor": "jobs.custom.ml_model.CustomMLModel",
+      "name": "Logistic Regression",
+      "properties": {}
+    }
+  ]
+}
