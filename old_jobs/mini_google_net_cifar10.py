@@ -1,8 +1,20 @@
 from core.process_executor import DeepLearningFrameworkAutomation
 import json
 from keras.datasets import cifar10
+import tensorflow as tf
 
-with open("configs/minivgg_cifar10.json", "r") as read_file:
+#config = tf.ConfigProto()
+#config.gpu_options.allow_growth = True
+#sess = tf.Session(config=config)
+
+#import keras.backend as K
+#dtype='float16'
+#K.set_floatx(dtype)
+
+# default is 1e-7 which is too small for float16.  Without adjusting the epsilon, we will get NaN predictions because of divide by zero problems
+#K.set_epsilon(1e-3)
+
+with open("configs/mini_google_net.json", "r") as read_file:
     config = json.load(read_file)
 
 ((trainX, trainY), (testX, testY)) = cifar10.load_data()

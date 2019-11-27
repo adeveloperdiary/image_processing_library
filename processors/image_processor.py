@@ -1,6 +1,8 @@
 import cv2
 from keras.preprocessing.image import img_to_array
 from utils.parents import Step, ImageProcessor
+import json
+from sklearn.feature_extraction.image import extract_patches_2d
 
 
 @ImageProcessor.register
@@ -59,3 +61,33 @@ class ImageToArrayPreprocessor(ImageProcessor):
             image = image / 255.0
 
         return image
+
+
+@Step.register
+class MeanRGBNormalize(ImageProcessor):
+
+    def __init__(self, properties={}):
+        means = json.loads(open(properties["load_from"]).read())
+        self.mean_r = means["R"]
+        self.mean_g = means["G"]
+        self.mean_b = means["B"]
+
+    def process(self, image):
+        (B, G, R) = cv2.split(image.astype("float32"))
+
+        R -= self.mean_r
+        G -= self.mean_g
+        B -= self.mean_b
+
+        return cv2.merge([B, G, R])
+
+
+@Step.register
+class PatchProcessor(ImageProcessor):
+
+    def __init__(self, properties={}):
+        self.width = properties["width"]
+        self.height = properties["height"]
+
+    def process(self, image):
+        return extract_patches_2d(image, (self.height, self.width), max_patches=1)[0]

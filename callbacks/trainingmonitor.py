@@ -6,9 +6,9 @@ import os
 
 
 class TrainingMonitor(BaseLogger):
-    def __init__(self, figPath, jsonPath=None, startAt=0):
+    def __init__(self, path, jsonPath=None, startAt=0):
         super(TrainingMonitor, self).__init__()
-        self.figPath = figPath
+        self.figPath = path
         self.jsonPath = jsonPath
         self.startAt = startAt
 

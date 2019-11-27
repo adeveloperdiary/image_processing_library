@@ -1,0 +1,38 @@
+{
+  "global": {
+    "epochs": 5,
+    "testX": "testX",
+    "testY": "testY",
+    "classes": 2,
+    "batch_size": 50
+  },
+  "steps": [
+    {
+      "definition": {
+        "name": "HDF5Generator - Test",
+        "processor": "processors.hdf5_generator.HDF5GeneratorProcessor"
+      },
+      "properties": {
+        "path": "/media/1TB_Disk/data/cats_vs_dogs/hdf5/test_new.hdf5",
+        "_batch_size": 128,
+        "output": "testGenerator"
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.evaluate.DefaultModelEvaluation",
+        "name": "Model Evaluation"
+      },
+      "properties": {
+        "generator": {
+          "testing_generator": "testGenerator",
+          "max_queue_size": 8
+        },
+        "model_output": "model_output",
+        "load_model": "/home/home/Documents/synch/cats_vs_dogs/output/alexnet_dogs_vs_cats.model",
+
+        "rank5_accuracy": true
+      }
+    }
+  ]
+}

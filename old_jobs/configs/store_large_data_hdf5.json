@@ -1,0 +1,206 @@
+{
+  "global": {
+    "epochs": 10,
+    "trainX": "trainX",
+    "trainY": "trainY",
+    "testX": "testX",
+    "testY": "testY",
+    "validationX": "validationX",
+    "validationY": "validationY"
+  },
+  "steps": [
+    {
+      "definition": {
+        "name": "ImageLoader_FromPath",
+        "processor": "jobs.Dogs_vs_Cats_ImageStore.custom_steps.ImageLoader_FromPath"
+      },
+      "properties": {
+        "image_path": "/media/1TB_Disk/data/cats_vs_dogs/train",
+        "output": "paths",
+        "labels": "labels"
+      }
+    },
+    {
+      "definition": {
+        "name": "TrainTestSplit",
+        "processor": "processors.train_test_split.TrainTestSplit"
+      },
+      "properties": {
+        "data": "paths",
+        "labels": "labels",
+        "test_size": 0.1,
+        "label_to_number": true,
+        "classes": 2,
+        "validation_size": 0.1,
+        "random_state": 42,
+        "shuffle": true,
+        "stratify": true
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.image_loader.ImageLoader",
+        "name": "Image Loader - Training"
+      },
+      "properties": {
+        "type": "image_dir",
+        "input": {
+          "_path": "/home/home/Documents/synch/datasets/animals",
+          "input_data": "trainX",
+          "input_labels": "trainY"
+        },
+        "output": {
+          "_data": "data",
+          "_labels": "labels",
+          "hdf5_file": "/media/1TB_Disk/data/cats_vs_dogs/hdf5/train_new.hdf5",
+          "dim": {
+            "features": {
+              "width": 256,
+              "height": 256,
+              "depth": 3
+            },
+            "target": 2
+          },
+          "label_to_number": false
+        },
+        "pre_processing": [
+          {
+            "type": "extract_mean_rgb",
+            "save_to": "output/mean_rgb.json"
+          }
+        ],
+        "pipeline": [
+          {
+            "processor": "processors.image_processor.MeanRGBNormalize",
+            "name": "Mean RGB Normalize",
+            "properties": {
+              "load_from": "output/mean_rgb.json"
+            }
+          },
+          {
+            "processor": "processors.image_processor.ImageResize",
+            "name": "Image Resize",
+            "properties": {
+              "_interpolation": 0,
+              "width": 256,
+              "height": 256,
+              "crop": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.image_loader.ImageLoader",
+        "name": "Image Loader - Test"
+      },
+      "properties": {
+        "type": "image_dir",
+        "input": {
+          "_path": "/home/home/Documents/synch/datasets/animals",
+          "input_data": "testX",
+          "input_labels": "testY"
+        },
+        "output": {
+          "_data": "data",
+          "_labels": "labels",
+          "hdf5_file": "/media/1TB_Disk/data/cats_vs_dogs/hdf5/test_new.hdf5",
+          "dim": {
+            "features": {
+              "width": 227,
+              "height": 227,
+              "depth": 3
+            },
+            "target": 2
+          },
+          "label_to_number": false
+        },
+        "pre_processing": [
+        ],
+        "pipeline": [
+          {
+            "processor": "processors.image_processor.MeanRGBNormalize",
+            "name": "Mean RGB Normalize",
+            "properties": {
+              "load_from": "output/mean_rgb.json"
+            }
+          },
+          {
+            "processor": "processors.image_processor.ImageResize",
+            "name": "Image Resize",
+            "properties": {
+              "_interpolation": 0,
+              "width": 227,
+              "height": 227,
+              "crop": false
+            }
+          },
+          {
+            "processor": "processors.image_processor.ImageToArrayPreprocessor",
+            "name": "Image To Array Preprocessor",
+            "properties": {
+              "normalize_image": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.image_loader.ImageLoader",
+        "name": "Image Loader - Validation"
+      },
+      "properties": {
+        "type": "image_dir",
+        "input": {
+          "_path": "/home/home/Documents/synch/datasets/animals",
+          "input_data": "validationX",
+          "input_labels": "validationY"
+        },
+        "output": {
+          "_data": "data",
+          "_labels": "labels",
+          "hdf5_file": "/media/1TB_Disk/data/cats_vs_dogs/hdf5/val_new.hdf5",
+          "dim": {
+            "features": {
+              "width": 227,
+              "height": 227,
+              "depth": 3
+            },
+            "target": 2
+          },
+          "label_to_number": false
+        },
+        "pre_processing": [
+        ],
+        "pipeline": [
+          {
+            "processor": "processors.image_processor.MeanRGBNormalize",
+            "name": "Mean RGB Normalize",
+            "properties": {
+              "load_from": "output/mean_rgb.json"
+            }
+          },
+          {
+            "processor": "processors.image_processor.ImageResize",
+            "name": "Image Resize",
+            "properties": {
+              "_interpolation": 0,
+              "width": 227,
+              "height": 227,
+              "crop": false
+            }
+          },
+          {
+            "processor": "processors.image_processor.ImageToArrayPreprocessor",
+            "name": "Image To Array Preprocessor",
+            "properties": {
+              "normalize_image": false
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,2 +1,2 @@
-from callbacks.decay import step_decay
+from callbacks.decay import PolyDecay,StepDecay
 from callbacks.trainingmonitor import TrainingMonitor

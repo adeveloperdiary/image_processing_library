@@ -1,0 +1,176 @@
+{
+  "global": {
+    "epochs": 10,
+    "trainX": "trainX",
+    "trainY": "trainY",
+    "testX": "testX",
+    "testY": "testY"
+  },
+  "steps": [
+    {
+      "definition": {
+        "name": "ImageLoader",
+        "processor": "processors.image_loader.ImageLoader"
+      },
+      "properties": {
+        "pipeline": [
+          {
+            "processor": "processors.image_processor.ImageResize",
+            "name": "ImageResize",
+            "properties": {
+              "interpolation": 3,
+              "width": 224,
+              "height": 224,
+              "crop": false
+            }
+          },
+          {
+            "processor": "processors.image_processor.ImageToArrayPreprocessor",
+            "name": "ImageToArrayPreprocessor",
+            "properties": {
+              "normalize_image": true
+            }
+          }
+        ],
+        "type": "image_dir",
+        "path": "/home/home/Documents/synch/17flowers/jpg",
+        "data": "data",
+        "labels": "labels"
+      }
+    },
+    {
+      "definition": {
+        "name": "TrainTestSplit",
+        "processor": "processors.train_test_split.TrainTestSplit"
+      },
+      "properties": {
+        "data": "data",
+        "labels": "labels",
+        "test_size": 0.25,
+        "label_to_number": true
+      }
+    },
+    {
+      "definition": {
+        "name": "TransferLearning",
+        "processor": "processors.transfer_learning.TransferLearning"
+      },
+      "properties": {
+        "model": "Flatten()->Dense(256,relu)->Dropout(0.5)->Dense(17,softmax)",
+        "output": "model",
+        "pre_trained_model": "VGG16",
+        "base_model": "base_model"
+      }
+    },
+    {
+      "definition": {
+        "name": "Quick_Optimization",
+        "processor": "processors.optimization.DefaultOptimization"
+      },
+      "properties": {
+        "optimization": {
+          "algorithm": "RMSprop",
+          "learning_rate": 0.001
+        },
+        "loss": "CategoricalCrossEntropy",
+        "metrics": "accuracy",
+        "model": "model"
+      }
+    },
+    {
+      "definition": {
+        "name": "Warm_up_Training",
+        "processor": "processors.training.DefaultTraining"
+      },
+      "properties": {
+        "callbacks": [],
+        "batch_size": 32,
+        "verbose": 1,
+        "model": "model",
+        "output": "model_output",
+        "epochs": 25,
+        "augmentation": {
+          "rotation_range": 30,
+          "width_shift_range": 0.1,
+          "height_shift_range": 0.1,
+          "shear_range": 0.2,
+          "zoom_range": 0.2,
+          "horizontal_flip": true,
+          "vertical_flip": false,
+          "save_to": "CustomAugmentation",
+          "fill_mode": "nearest"
+        }
+      }
+    },
+    {
+      "definition": {
+        "name": "Warm_up_Evaluation",
+        "processor": "processors.evaluate.DefaultModelEvaluation"
+      },
+      "properties": {
+        "batch_size": 32,
+        "labels": "labels",
+        "model": "model",
+        "model_output": "model_output",
+        "rank5_accuracy": false
+      }
+    },
+    {
+      "definition": {
+        "name": "UnFreeze_CNN_Layers",
+        "processor": "processors.transfer_learning.TransferLearning"
+      },
+      "properties": {
+        "base_model": "base_model",
+        "unfreeze_from": 15,
+        "unfreeze_layers": true
+      }
+    },
+    {
+      "definition": {
+        "name": "Optimization",
+        "processor": "processors.optimization.DefaultOptimization"
+      },
+      "properties": {
+        "optimization": {
+          "algorithm": "StochasticGradientDescent",
+          "learning_rate": 0.001,
+          "nesterov": false
+        },
+        "loss": "CategoricalCrossEntropy",
+        "metrics": "accuracy",
+        "model": "model"
+      }
+    },
+    {
+      "definition": {
+        "name": "Training",
+        "processor": "processors.training.DefaultTraining"
+      },
+      "properties": {
+        "callbacks": [],
+        "batch_size": 32,
+        "verbose": 1,
+        "model": "model",
+        "output": "model_output",
+        "epochs": 100,
+        "augmentation": {
+          "load_from": "CustomAugmentation"
+        }
+      }
+    },
+    {
+      "definition": {
+        "name": "Evaluation",
+        "processor": "processors.evaluate.DefaultModelEvaluation"
+      },
+      "properties": {
+        "batch_size": 32,
+        "labels": "labels",
+        "model": "model",
+        "model_output": "model_output",
+        "rank5_accuracy": false
+      }
+    }
+  ]
+}

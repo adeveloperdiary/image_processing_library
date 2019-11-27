@@ -4,15 +4,21 @@
     "trainX": "trainX",
     "trainY": "trainY",
     "testX": "testX",
-    "testY": "testY"
+    "testY": "testY",
+    "validationX": "validationX",
+    "validationY": "validationY"
   },
   "steps": [
     {
-      "processor": "processors.image_loader.ImageLoader",
-      "name": "Image Loader",
+      "definition": {
+        "processor": "processors.image_loader.ImageLoader",
+        "name": "Image Loader"
+      },
       "properties": {
         "type": "image_dir",
-        "path": "/home/home/Documents/synch/datasets/animals",
+        "_path": "/home/home/Documents/synch/datasets/animals",
+        "input_data": "data",
+        "input_labels": "data",
         "data": "data",
         "labels": "labels",
         "pipeline": [
@@ -20,6 +26,7 @@
             "processor": "processors.image_processor.ImageResize",
             "name": "Image Resize",
             "properties": {
+              "_interpolation": 0,
               "width": 32,
               "height": 32,
               "crop": true
@@ -36,18 +43,26 @@
       }
     },
     {
-      "processor": "processors.train_test_split.TrainTestSplit",
-      "name": "Train Test Split",
+      "definition": {
+        "processor": "processors.train_test_split.TrainTestSplit",
+        "name": "Train Test Split"
+      },
       "properties": {
         "data": "data",
         "labels": "labels",
         "test_size": 0.25,
-        "label_to_number": true
+        "validation_size": 0.25,
+        "label_to_number": true,
+        "random_state": 42,
+        "stratify": true,
+        "shuffle": true
       }
     },
     {
-      "processor": "processors.custom_model.CustomModel",
-      "name": "Custom Model",
+      "definition": {
+        "processor": "processors.custom_model.CustomModel",
+        "name": "Custom Model"
+      },
       "properties": {
         "model": "[Conv2D(32,3,same)=>Activation(relu)]*2->MaxPooling2D(2)->Dropout(0.25)->[Conv2D(64,3,same)=>Activation(relu)=>BatchNormalization(-1)]*2->MaxPooling2D(2)->Dropout(0.25)->Flatten()->Dense(512)->Activation(relu)->BatchNormalization()->Dropout(0.5)->Dense()->Activation(softmax)",
         "output": "model",
@@ -59,25 +74,28 @@
       }
     },
     {
-      "processor": "processors.optimization.DefaultOptimization",
-      "name": "Default Optimization",
+      "definition": {
+        "processor": "processors.optimization.DefaultOptimization",
+        "name": "Default Optimization"
+      },
       "properties": {
         "model": "model",
         "optimization": {
-          "algorithm": "stochastic_gradient_descent",
+          "algorithm": "StochasticGradientDescent",
           "learning_rate": 0.01,
           "_decay": 0.01,
           "momentum": 0.9,
           "nesterov": true
         },
-        "loss": "categorical_crossentropy",
-        "metrics": "accuracy",
-        "output": "model"
+        "loss": "CategoricalCrossEntropy",
+        "metrics": "accuracy"
       }
     },
     {
-      "processor": "processors.training.DefaultTraining",
-      "name": "Default Training",
+      "definition": {
+        "processor": "processors.training.DefaultTraining",
+        "name": "Default Training"
+      },
       "properties": {
         "model": "model",
         "output": "model_output",
@@ -85,16 +103,16 @@
         "verbose": 1,
         "callbacks": [
           {
-            "type": "decay",
-            "method": "callbacks.decay.step_decay"
+            "type": "LearningRateScheduler",
+            "class": "callbacks.decay.StepDecay"
           },
           {
-            "type": "training_monitor",
+            "type": "BaseLogger",
             "class": "callbacks.trainingmonitor.TrainingMonitor",
             "path": "output/checkpoint"
           },
           {
-            "type": "checkpoint",
+            "type": "ModelCheckpoint",
             "path": "output/checkpoint",
             "monitor": "val_loss",
             "filename": "animals_best_weights.hdf5",
@@ -105,15 +123,18 @@
       }
     },
     {
-      "processor": "processors.evaluate.DefaultModelEvaluation",
-      "name": "Default Model Evaluation",
+      "definition": {
+        "processor": "processors.evaluate.DefaultModelEvaluation",
+        "name": "Default Model Evaluation"
+      },
       "properties": {
         "model_output": "model_output",
         "model": "model",
         "batch_size": 128,
         "labels": "labels",
         "plot_loc": "output/plots/vgg.png",
-        "_load_model": "output/model/shallownet_weights.hdf5"
+        "_load_model": "output/model/shallownet_weights.hdf5",
+        "rank5_accuracy": true
       }
     }
   ]

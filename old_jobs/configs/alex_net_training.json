@@ -1,0 +1,128 @@
+{
+  "global": {
+    "epochs": 5,
+    "trainX": "trainX",
+    "trainY": "trainY",
+    "testX": "testX",
+    "testY": "testY",
+    "validationX": "validationX",
+    "validationY": "validationY",
+    "classes": 2,
+    "batch_size": 128
+  },
+  "steps": [
+    {
+      "definition": {
+        "name": "Image Augmentation",
+        "processor": "processors.image_augmentation.ImageAugmentation"
+      },
+      "properties": {
+        "rotation_range": 30,
+        "width_shift_range": 0.1,
+        "height_shift_range": 0.1,
+        "shear_range": 0.2,
+        "zoom_range": 0.2,
+        "horizontal_flip": true,
+        "fill_mode": "nearest",
+        "output": "augmentation"
+      }
+    },
+    {
+      "definition": {
+        "name": "HDF5Generator - Train",
+        "processor": "processors.hdf5_generator.HDF5GeneratorProcessor"
+      },
+      "properties": {
+        "path": "/media/1TB_Disk/data/cats_vs_dogs/hdf5/train_new.hdf5",
+        "_batch_size": 128,
+        "output": "trainGenerator",
+        "pipeline": [
+          {
+            "processor": "processors.image_processor.PatchProcessor",
+            "name": "Image Patch Processor",
+            "properties": {
+              "width": 227,
+              "height": 227
+            }
+          },
+          {
+            "processor": "processors.image_processor.ImageToArrayPreprocessor",
+            "name": "Image To Array Preprocessor",
+            "properties": {
+              "normalize_image": false
+            }
+          }
+        ],
+        "augmentation": "augmentation"
+      }
+    },
+    {
+      "definition": {
+        "name": "HDF5Generator - Validation",
+        "processor": "processors.hdf5_generator.HDF5GeneratorProcessor"
+      },
+      "properties": {
+        "path": "/media/1TB_Disk/data/cats_vs_dogs/hdf5/val_new.hdf5",
+        "_batch_size": 128,
+        "output": "valGenerator"
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.custom_model.CustomModel",
+        "name": "Custom Model"
+      },
+      "properties": {
+        "model": "Conv2D(96,11,same,4,l2)->Activation(relu)->BatchNormalization(-1)->MaxPooling2D(3,2)->Dropout(0.25)->Conv2D(256,5,same,0,l2)->Activation(relu)->BatchNormalization(-1)->MaxPooling2D(3,2)->Dropout(0.25)->[Conv2D(384,3,same,0,l2)=>Activation(relu)=>BatchNormalization(-1)]*2->Conv2D(256,5,same,0,l2)->Activation(relu)->BatchNormalization(-1)->MaxPooling2D(3,2)->Dropout(0.25)->Flatten()->[Dense(4096,l2)=>Activation(relu)=>BatchNormalization()=>Dropout(0.5)]*2->Dense(l2)->Activation(softmax)",
+        "output": "model",
+        "width": 227,
+        "height": 227,
+        "color_channel": 3,
+        "target_classes": 2,
+        "model_summary": true,
+        "regularization": 0.0002
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.optimization.DefaultOptimization",
+        "name": "Default Optimization"
+      },
+      "properties": {
+        "model": "model",
+        "optimization": {
+          "algorithm": "Adam",
+          "learning_rate": 1e-3
+        },
+        "loss": "CategoricalCrossEntropy",
+        "metrics": "accuracy"
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.training.DefaultTraining",
+        "name": "Default Training"
+      },
+      "properties": {
+        "model": "model",
+        "output": "model_output",
+        "verbose": 1,
+        "generator": {
+          "training_generator": "trainGenerator",
+          "validation_generator": "valGenerator",
+          "max_queue_size": 1,
+          "use_multiprocessing": true,
+          "workers": 16
+        },
+        "callbacks": [
+          {
+            "type": "BaseLogger",
+            "class": "callbacks.trainingmonitor.TrainingMonitor",
+            "path": "output/checkpoint"
+          }
+        ],
+        "save_model": "output/model/alexnet_dogs_vs_cats_new.model"
+      }
+    }
+  ]
+}

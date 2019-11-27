@@ -44,7 +44,7 @@
       }
     },
     {
-      "processor": "processors.training.DefaultTraining",
+      "processor": "processors.training_job.DefaultTraining",
       "name": "Default Training",
       "properties": {
         "model": "model",

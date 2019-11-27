@@ -1,0 +1,129 @@
+{
+  "global": {
+    "epochs": 10,
+    "trainX": "trainX",
+    "trainY": "trainY",
+    "testX": "testX",
+    "testY": "testY"
+  },
+  "steps": [
+    {
+      "definition": {
+        "name": "ImageLoader",
+        "processor": "processors.image_loader.ImageLoader"
+      },
+      "properties": {
+        "pipeline": [
+          {
+            "processor": "processors.image_processor.ImageResize",
+            "name": "ImageResize",
+            "properties": {
+              "interpolation": 3,
+              "width": 32,
+              "height": 32,
+              "crop": true
+            }
+          },
+          {
+            "processor": "processors.image_processor.ImageToArrayPreprocessor",
+            "name": "ImageToArrayPreprocessor",
+            "properties": {
+              "normalize_image": true
+            }
+          }
+        ],
+        "type": "image_dir",
+        "path": "/home/home/Documents/synch/datasets/animals",
+        "data": "data",
+        "labels": "labels"
+      }
+    },
+    {
+      "definition": {
+        "name": "TrainTestSplit",
+        "processor": "processors.train_test_split.TrainTestSplit"
+      },
+      "properties": {
+        "data": "data",
+        "labels": "labels",
+        "test_size": 0.25,
+        "label_to_number": true
+      }
+    },
+    {
+      "definition": {
+        "name": "MiniVGG",
+        "processor": "processors.custom_model.CustomModel"
+      },
+      "properties": {
+        "model": "[Conv2D(32,3,same)=>Activation(relu)]*2->MaxPooling2D(2)->Dropout(0.25)->[Conv2D(64,3,same)=>Activation(relu)=>BatchNormalization(-1)]*2->MaxPooling2D(2)->Dropout(0.25)->Flatten()->Dense(512)->Activation(relu)->BatchNormalization()->Dropout(0.5)->Dense()->Activation(softmax)",
+        "output": "model",
+        "width": 32,
+        "height": 32,
+        "color_channel": 3,
+        "target_classes": 10,
+        "model_summary": true
+      }
+    },
+    {
+      "definition": {
+        "name": "SGD",
+        "processor": "processors.optimization.DefaultOptimization"
+      },
+      "properties": {
+        "optimization": {
+          "algorithm": "StochasticGradientDescent",
+          "learning_rate": 0.01,
+          "momentum": 0.9,
+          "nesterov": true
+        },
+        "loss": "CategoricalCrossEntropy",
+        "metrics": "accuracy",
+        "model": "model"
+      }
+    },
+    {
+      "definition": {
+        "name": "Training",
+        "processor": "processors.training.DefaultTraining"
+      },
+      "properties": {
+        "callbacks": [
+          {
+            "type": "LearningRateScheduler",
+            "method": "callbacks.decay.step_decay"
+          },
+          {
+            "type": "BaseLogger",
+            "class": "callbacks.trainingmonitor.TrainingMonitor",
+            "path": "output/checkpoint"
+          },
+          {
+            "type": "ModelCheckpoint",
+            "filename": "animals_best_weights.hdf5",
+            "path": "output/checkpoint",
+            "monitor": "val_loss",
+            "save_best_only": true
+          }
+        ],
+        "batch_size": 64,
+        "verbose": 1,
+        "model": "model",
+        "output": "model_output"
+      }
+    },
+    {
+      "definition": {
+        "name": "Evaluation",
+        "processor": "processors.evaluate.DefaultModelEvaluation"
+      },
+      "properties": {
+        "batch_size": 128,
+        "labels": "labels",
+        "model": "model",
+        "model_output": "model_output",
+        "plot_loc": "output/plots/plot.png"
+      }
+    }
+  ]
+}

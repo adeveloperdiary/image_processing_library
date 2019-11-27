@@ -11,13 +11,12 @@ class DeepLearningFrameworkAutomation:
         steps_length = len(steps)
 
         for step_counter, step in enumerate(steps):
-            print("[FRAMEWORK] Executing Step [{}/{}] - {}".format(step_counter + 1, steps_length, step["name"], ))
+            print("[FRAMEWORK] Executing Step [{}/{}] - {}".format(step_counter + 1, steps_length, step["definition"]["name"]))
 
             # START - Execute the Step
-            class_loader = FrameworkUtility.get_instance(step["processor"])
+            class_loader = FrameworkUtility.get_instance(step["definition"]["processor"])
             processor = class_loader()
             self.container = processor.process(self.master_config["global"], step["properties"], self.container)
             # END - Execute the Step
 
         return self.container
-

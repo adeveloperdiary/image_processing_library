@@ -101,5 +101,6 @@ class DefaultFeatureExtractor(Step):
 
             dataset.close()
             bar.finish()
-
+        else:
+            print("Other types are not supported")
         return container

@@ -1,0 +1,170 @@
+{
+  "global": {
+    "epochs": 10,
+    "trainX": "trainX",
+    "trainY": "trainY",
+    "testX": "testX",
+    "testY": "testY"
+  },
+  "steps": [
+    {
+      "definition": {
+        "processor": "processors.image_loader.ImageLoader",
+        "name": "Image Loader"
+      },
+      "properties": {
+        "type": "image_dir",
+        "path": "/home/home/Documents/synch/17flowers/jpg",
+        "data": "data",
+        "labels": "labels",
+        "pipeline": [
+          {
+            "processor": "processors.image_processor.ImageResize",
+            "name": "Image Resize",
+            "properties": {
+              "_interpolation": 0,
+              "width": 224,
+              "height": 224,
+              "crop": false
+            }
+          },
+          {
+            "processor": "processors.image_processor.ImageToArrayPreprocessor",
+            "name": "Image To Array Preprocessor",
+            "properties": {
+              "normalize_image": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.train_test_split.TrainTestSplit",
+        "name": "Train Test Split"
+      },
+      "properties": {
+        "data": "data",
+        "labels": "labels",
+        "test_size": 0.25,
+        "label_to_number": true
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.transfer_learning.TransferLearning",
+        "name": "Transfer Learning"
+      },
+      "properties": {
+        "model": "Flatten()->Dense(256,relu)->Dropout(0.5)->Dense(17,softmax)",
+        "output": "model",
+        "pre_trained_model": "VGG16",
+        "base_model": "base_model"
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.optimization.DefaultOptimization",
+        "name": "Default Optimization"
+      },
+      "properties": {
+        "model": "model",
+        "optimization": {
+          "algorithm": "RMSprop",
+          "learning_rate": 0.001
+        },
+        "loss": "CategoricalCrossEntropy",
+        "metrics": "accuracy"
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.training.DefaultTraining",
+        "name": "Default Training"
+      },
+      "properties": {
+        "model": "model",
+        "output": "model_output",
+        "batch_size": 32,
+        "verbose": 1,
+        "epochs": 25,
+        "augmentation": {
+          "rotation_range": 30,
+          "width_shift_range": 0.1,
+          "height_shift_range": 0.1,
+          "shear_range": 0.2,
+          "zoom_range": 0.2,
+          "horizontal_flip": true,
+          "fill_mode": "nearest",
+          "save_to": "CustomAugmentation"
+        },
+        "_save_model": "output/model/shallownet_weights.hdf5"
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.evaluate.DefaultModelEvaluation",
+        "name": "Default Model Evaluation"
+      },
+      "properties": {
+        "model_output": "model_output",
+        "model": "model",
+        "batch_size": 32,
+        "labels": "labels"
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.transfer_learning.TransferLearning",
+        "name": "Transfer Learning"
+      },
+      "properties": {
+        "unfreeze_layers": true,
+        "base_model": "base_model",
+        "unfreeze_from": 15
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.optimization.DefaultOptimization",
+        "name": "Default Optimization"
+      },
+      "properties": {
+        "model": "model",
+        "optimization": {
+          "algorithm": "StochasticGradientDescent",
+          "learning_rate": 0.001
+        },
+        "loss": "CategoricalCrossEntropy",
+        "metrics": "accuracy"
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.training.DefaultTraining",
+        "name": "Default Training"
+      },
+      "properties": {
+        "model": "model",
+        "output": "model_output",
+        "batch_size": 32,
+        "verbose": 1,
+        "epochs": 100,
+        "augmentation": "CustomAugmentation",
+        "_save_model": "output/model/shallownet_weights.hdf5"
+      }
+    },
+    {
+      "definition": {
+        "processor": "processors.evaluate.DefaultModelEvaluation",
+        "name": "Default Model Evaluation"
+      },
+      "properties": {
+        "model_output": "model_output",
+        "model": "model",
+        "batch_size": 32,
+        "labels": "labels"
+      }
+    }
+  ]
+}

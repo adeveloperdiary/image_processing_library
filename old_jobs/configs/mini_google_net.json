@@ -1,0 +1,91 @@
+{
+  "global": {
+    "epochs": 70,
+    "trainX": "trainX",
+    "trainY": "trainY",
+    "testX": "testX",
+    "testY": "testY",
+    "classes": 10,
+    "batch_size": 64
+  },
+  "steps": [
+    {
+      "definition": {
+        "processor": "processors.label_to_number.LabelToNumber",
+        "name": "Label To Number"
+      },
+      "properties": {
+      }
+    },
+    {
+      "definition": {
+        "processor": "old_jobs.custom.miniGoogleNet.MiniGoogleNet",
+        "name": "Mini Google Net"
+      },
+      "properties": {
+        "output": "model",
+        "model_summary": true,
+        "width": 32,
+        "height": 32,
+        "color_channel": 3
+      }
+    },
+    {
+      "definition": {
+        "name": "Image Augmentation",
+        "processor": "processors.image_augmentation.ImageAugmentation"
+      },
+      "properties": {
+        "rotation_range": 0,
+        "width_shift_range": 0.1,
+        "height_shift_range": 0.1,
+        "shear_range": 0.0,
+        "zoom_range": 0.0,
+        "horizontal_flip": true,
+        "fill_mode": "nearest",
+        "output": "augmentation"
+      }
+    },
+    {
+       "definition": {
+         "processor": "processors.optimization.DefaultOptimization",
+         "name": "Default Optimization"
+       },
+      "properties": {
+        "model": "model",
+        "optimization": {
+          "algorithm": "StochasticGradientDescent",
+          "learning_rate": 5e-3,
+          "momentum": 0.9
+        },
+        "loss": "CategoricalCrossEntropy",
+        "metrics": "accuracy",
+        "output": "model"
+      }
+    },
+    {
+       "definition": {
+         "processor": "processors.training.DefaultTraining",
+         "name": "Default Training"
+       },
+      "properties": {
+        "model": "model",
+        "output": "model_output",
+        "verbose": 1,
+        "augmentation": "augmentation",
+        "callbacks": [
+          {
+            "type": "LearningRateScheduler",
+            "class": "callbacks.decay.PolyDecay"
+          },
+          {
+            "type": "BaseLogger",
+            "class": "callbacks.trainingmonitor.TrainingMonitor",
+            "path": "output/checkpoint"
+          }
+        ],
+        "save_model": "output/minigooglenet_cifar10.hdf5"
+      }
+    }
+  ]
+}

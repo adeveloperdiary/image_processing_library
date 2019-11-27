@@ -4,6 +4,7 @@ from keras.layers.convolutional import Conv2D, MaxPooling2D
 from keras.layers.core import Activation, Flatten, Dense, Dropout
 import re
 from utils.parents import Step
+from keras.regularizers import l2
 
 
 @Step.register
@@ -46,10 +47,29 @@ class CustomModel(Step):
 
             if name == "Conv2D":
                 params = params.split(",")
+
                 if i == 0:
-                    model.add(Conv2D(int(params[0]), (int(params[1]), int(params[1])), padding=params[2], input_shape=(height, width, color_channel)))
+                    conv2d = Conv2D(int(params[0]), (int(params[1]), int(params[1])), padding=params[2], input_shape=(height, width, color_channel))
+
+                    if len(params) > 3 and int(params[3]) > 0:
+                        conv2d.strides = (int(params[3]), int(params[3]))
+
+                    if len(params) == 5:
+                        if params[4] == "l2":
+                            conv2d.kernel_regularizer = l2(properties["regularization"])
+
                 else:
-                    model.add(Conv2D(int(params[0]), (int(params[1]), int(params[1])), padding=params[2]))
+                    conv2d = Conv2D(int(params[0]), (int(params[1]), int(params[1])), padding=params[2])
+
+                    if len(params) > 3 and int(params[3]) > 0:
+                        conv2d.strides = (int(params[3]), int(params[3]))
+
+                    if len(params) == 5:
+                        if params[4] == "l2":
+                            conv2d.kernel_regularizer = l2(properties["regularization"])
+
+                model.add(conv2d)
+
             elif name == "Activation":
                 model.add(Activation(params))
             elif name == "MaxPooling2D":
@@ -69,7 +89,22 @@ class CustomModel(Step):
                 model.add(Flatten())
             elif name == "Dense":
                 if params:
-                    model.add(Dense(int(params)))
+                    if params.find(",") > -1:
+                        params = params.split(",")
+
+                        kernel_regularizer = None
+
+                        if params[1] == "l2":
+                            kernel_regularizer = l2(properties["regularization"])
+
+                        model.add(Dense(int(params[0]), kernel_regularizer=kernel_regularizer))
+
+                    else:
+                        if params.isdigit():
+                            model.add(Dense(int(params)))
+                        elif params == "l2":
+                            kernel_regularizer = l2(properties["regularization"])
+                            model.add(Dense(target_classes, kernel_regularizer=kernel_regularizer))
                 else:
                     model.add(Dense(target_classes))
 

@@ -1,4 +1,4 @@
-from keras.optimizers import SGD
+from keras.optimizers import SGD, RMSprop,Adam
 from utils.parents import Step
 from keras import backend as K
 
@@ -14,17 +14,26 @@ class DefaultOptimization(Step):
 
         optimization_def = properties["optimization"]
 
-        if optimization_def["algorithm"] == "stochastic_gradient_descent":
+        if optimization_def["algorithm"] == "StochasticGradientDescent":
             optimizer = SGD()
 
             if "nesterov" in optimization_def:
                 optimizer.nesterov = optimization_def["nesterov"]
 
+        if optimization_def["algorithm"] == "RMSprop":
+            optimizer = RMSprop()
+
+        if optimization_def["algorithm"] == "Adam":
+            optimizer = Adam()
+
         metrics = properties["metrics"].split(",")
 
-        model.compile(loss=properties["loss"], optimizer=optimizer, metrics=metrics)
+        if properties["loss"] == "CategoricalCrossEntropy":
+            loss = "categorical_crossentropy"
 
-        if optimization_def["algorithm"] == "stochastic_gradient_descent":
+        model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
+
+        if optimization_def["algorithm"] == "StochasticGradientDescent":
             if "learning_rate" in optimization_def:
                 K.set_value(model.optimizer.lr, optimization_def["learning_rate"])
 
@@ -34,6 +43,14 @@ class DefaultOptimization(Step):
             if "decay" in optimization_def:
                 K.set_value(model.optimizer.decay, optimization_def["decay"] / global_properties["epochs"])
 
-        container[properties["output"]] = model
+        if optimization_def["algorithm"] == "RMSprop":
+            if "learning_rate" in optimization_def:
+                K.set_value(model.optimizer.lr, optimization_def["learning_rate"])
+
+        if optimization_def["algorithm"] == "Adam":
+            if "learning_rate" in optimization_def:
+                K.set_value(model.optimizer.lr, optimization_def["learning_rate"])
+
+        container[properties["model"]] = model
 
         return container

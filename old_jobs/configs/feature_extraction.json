@@ -8,8 +8,10 @@
   },
   "steps": [
     {
-      "processor": "processors.feature_extractor.DefaultFeatureExtractor",
-      "name": "Default Feature Extractor",
+      "definition": {
+        "processor": "processors.feature_extractor.DefaultFeatureExtractor",
+        "name": "Default Feature Extractor"
+      },
       "properties": {
         "image_loading": {
           "type": "image_dir",
@@ -45,12 +47,14 @@
       }
     },
     {
-      "processor": "processors.image_loader.ImageLoader",
-      "name": "Image Loader",
+      "definition": {
+        "processor": "processors.image_loader.ImageLoader",
+        "name": "Image Loader"
+      },
       "properties": {
         "type": "hdf5",
         "path": "/media/1TB_Disk/data/vgg16_features.hdf5",
-        "db": "db",
+        "output": "db",
         "train_test_split": {
           "labels": "labels",
           "test_percent": 25,
@@ -59,8 +63,10 @@
       }
     },
     {
-      "processor": "jobs.custom.ml_model.CustomMLModel",
-      "name": "Logistic Regression",
+      "definition": {
+        "processor": "jobs.custom.ml_model.CustomMLModel",
+        "name": "Logistic Regression"
+      },
       "properties": {}
     }
   ]
