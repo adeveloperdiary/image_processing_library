@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../css/fontawesome-all.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../css/jquery.dataTables.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../css/dataTables.bootstrap4.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../css/jsoneditor.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../css/style.css" type="text/css"/>
+    <link rel="icon" type="image/png" href="../../images/logo_dark.png"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css"/>
+    <title>Microservices Self Service Portal</title>
+</head>
+
+<body>
+
+<nav class="navbar  navbar-dark bg-primary">
+    <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Bootstrap">
+        <img src="../../images/logo.png" height="40px"/>
+        <span class="navbar-brand mb-0 font-weight-bold">Self Service Portal</span>
+        <a href="#" class="btn btn-primary" style="float: right;" id="user"><span id="profile"></span></a>
+    </a>
+</nav>
+<div class="alert alert-dismissible fade" role="alert" style="position: fixed;top:40px;left:30%;width:680px">
+    <span id="alert-msg"></span>
+</div>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb" style="margin-bottom: 0 !important">
+        <li class="breadcrumb-item">
+            <a href="../dashboard.html">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="monitoring_index.html">Service Monitoring</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page" id="id_val"></li>
+    </ol>
+</nav>
+<div class="container" style="padding-top:10px;padding-bottom: 10px">
+    <div class="row justify-content-md-center">
+        <ul class="nav">
+
+        </ul>
+    </div>
+</div>
+<div class="container-fluid" style="padding-bottom: 10px">
+    <div class="row justify-content-md-center">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">Service Execution Flow</div>
+                <div class="card-body">
+                    <div style="margin:0 auto" id="container">
+                        <div id="designer" style="border:1px solid #dbdbdb"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid h-100" style="margin-top:20px">
+    <!--<div class="alert alert-primary text-center" role="alert">
+        <b style="font-size: 20px">Controller</b>
+    </div>-->
+    <div class="row justify-content-md-center">
+        <div class="col-lg-4" id="divColumn1Property">
+            <div style="width:100%">
+                <div class="card">
+                    <div class="card-header">Statistics (<span id="basic_title"></span>)</div>
+                    <div class="card-body">
+                        <svg height="50" id="current_time"></svg>
+                        <svg height="50" id="average_time"></svg>
+                        <svg height="50" id="total_time"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">Before Execution (<span id="editor_title"></span>)</div>
+                <div class="card-body">
+                    <div id="jsoneditor" style="width: 100%; height:700px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4" id="divColumn3Property" style="pading-bottom:20px">
+            <div class="card">
+                <div class="card-header">Error Logs </div>
+                <div class="card-body">
+                    <textarea style="width:100%;height: 96%; min-height:700px;font-size: 14px;color:#990000;border:1px solid #3883fa;border-radius: 0" class="form-control" id="error_logs"></textarea>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">Copyrighted by <a>Cognizant Technology Solutions</a></span>
+        <div id="selectedNodes"></div>
+    </div>
+</footer>
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="../../lib/jquery-3.3.1.min.js"></script>
+<script src="../../lib/popper.min.js"></script>
+<script src="../../lib/bootstrap.min.js"></script>
+<script src="../../lib/handlebars-v4.0.11.js"></script>
+<script src="../../lib/jquery.dataTables.min.js"></script>
+<script src="../../lib/dataTables.bootstrap4.min.js"></script>
+<script src="../../lib/jsoneditor.min.js"></script>
+<script src="../../lib/d3.v5.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js"></script>
+
+
+<script src="../../js/common/util.js"></script>
+<script src="../../js/monitoring/monitoring_details.js"></script>
+
+
+</body>
+</html>

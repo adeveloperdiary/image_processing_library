@@ -1,0 +1,1246 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../css/bootstrap.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../css/fontawesome-all.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../css/jquery.dataTables.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../css/dataTables.bootstrap4.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../css/jsoneditor.min.css" type="text/css"/>
+    <link rel="stylesheet" href="../../css/style.css" type="text/css"/>
+    <link rel="icon" type="image/png" href="../../images/logo_dark.png"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css"/>
+    <title>Microservices Self Service Portal</title>
+</head>
+
+<body>
+
+<nav class="navbar  navbar-dark bg-primary">
+    <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Bootstrap">
+        <img src="../../images/logo.png" height="40px"/>
+        <span class="navbar-brand mb-0 font-weight-bold">Self Service Portal</span>
+        <a href="#" class="btn btn-primary" style="float: right;" id="user"><span id="profile"></span></a>
+    </a>
+</nav>
+<div class="alert alert-dismissible fade" role="alert" style="position: fixed;top:40px;left:30%;width:680px">
+    <span id="alert-msg"></span>
+</div>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb" style="margin-bottom: 0 !important">
+        <li class="breadcrumb-item">
+            <a href="../dashboard.html">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="index.html">Service Configuration</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page" id="rowkey_val"></li>
+    </ol>
+</nav>
+<div class="container-fluid" style="padding-top:10px;padding-bottom: 10px">
+    <div class="row justify-content-md-center">
+        <ul class="nav">
+            <li class="nav-item" style="padding-bottom: 10px">
+                <button type="button" class="btn btn-sm btn-dark" id="addStep">
+                    <i class="fas fa-plus-square text-success" style="margin-right:5px"></i>Add Step
+                </button>
+            </li>
+            
+            <li class="nav-item">
+                <button type="button" class="btn btn-sm btn-dark" id="deleteElement" onclick="deleteElement()" disabled>
+                    <i class="fas fa-trash text-danger" style="margin-right:5px"></i>Delete Step
+                </button>
+            </li>
+            
+            <li class="nav-item">
+                <button type="button" class="btn btn-sm btn-dark" id="addSubStep" disabled>
+                    <i class="fas fa-plus-square text-success" style="margin-right:5px"></i>Add Sub Step
+                </button>
+            </li>
+            
+            <li class="nav-item">
+                <button type="button" class="btn btn-sm btn-dark" id="createLink" onclick="createLink()" disabled><i
+                        class="fas fa-arrow-circle-right text-success"
+                        style="margin-right:5px"></i>Create Link
+                </button>
+            </li>
+            
+            <li class="nav-item">
+                <button type="button" class="btn btn-sm btn-dark" id="createErrLink" onclick="createErrLink()" disabled><i
+                        class="fas fa-arrow-circle-right text-warning"
+                        style="margin-right:5px"></i>Create Error Link
+                </button>
+            </li>         
+          
+            <li class="nav-item">
+                <button type="button" class="btn btn-sm btn-dark" id="deleteLink" onclick="deleteLink()" disabled><i
+                        class="fas fa-minus-circle text-danger"
+                        style="margin-right:5px"></i>Delete Link
+                </button>
+            </li>
+            
+			<li class="nav-item">
+                <button type="button" class="btn btn-sm btn-dark" id="deleteErrLink" onclick="deleteErrLink()" disabled><i
+                        class="fas fa-minus-circle text-danger"
+                        style="margin-right:5px"></i>Delete Error Link
+                </button>
+            </li>
+                       
+            <li class="nav-item">
+                <button type="button" class="btn btn-sm btn-dark" id="saveConfig"><i
+                        class="fas fa-save text-warning"
+                        style="margin-right:5px"></i>Save Config
+                </button>
+            </li>
+
+            <li class="nav-item">
+                <button type="button" class="btn btn-sm btn-success" id="toggleView" onclick="downloadConfig()">
+                    <i class="fas fa-download" style="margin-right:5px;"></i>Download Config
+                </button>
+            </li>
+
+            <li class="nav-item">
+                <button type="button" class="btn btn-sm btn-info" id="bulkUploadExcel"
+                        onclick="javascript:bBulkUpload=true;$('#uploadNewConfigModel').modal()"><i
+                        class="fas fa-upload"
+                        style="margin-right:5px;"></i>Excel
+                    Bulk Upload
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="btn btn-sm btn-danger" id="deleteConfig"><i class="fas fa-trash-alt"
+                                                                                         style="margin-right:5px;"></i>Delete
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="container-fluid" style="margin-bottom: 30px">
+    <div class="row justify-content-md-center">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">Service Designer</div>
+                <div class="card-body">
+                    <div style="margin:0 auto;" id="container">
+                        <div id="designer" style="border:1px solid #dbdbdb"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="container-fluid h-100">
+    <!--<div class="alert alert-primary text-center" role="alert">
+        <b style="font-size: 20px">Controller</b>
+    </div>-->
+    <div class="row justify-content-md-center">
+        <div class="col-lg-3" id="divColumn1Property">
+
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header">Step Configuration (<span id="editor_title"></span>)</div>
+                <div class="card-body">
+                    <div id="jsoneditor" style="width: 100%; height:600px;"></div>
+                    <button type="button" class="btn btn-sm btn-primary" id="saveEditorbttn" 
+                    style="margin-top:10px;float:right;">Save</button>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-lg-3" id="divColumn3Property">
+
+        </div>
+
+
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">Copyrighted by <a>Cognizant Technology Solutions</a></span>
+    </div>
+</footer>
+
+<div class="modal fade" id="addNewStep" tabindex="-1" role="dialog" aria-labelledby="addNewStepTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNewStepTitle">New Step</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmaddNewStep">
+                    <div class="form-group">
+                        <label for="step-name" class="col-form-label">Step Name:</label>
+                        <input type="text" class="form-control" id="step-name" required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="processor-class" class="col-form-label">Processor:</label>
+                        <select class="form-control" id="processor-class">
+                            <option value="MSFInputValidation">MSF Input Validation</option>
+                            <option value="MSFJSONValidation">MSF JSON Validation</option>
+                            <option value="MSFJSONTransformation">MSF JSON Transformation</option>
+                            <option value="MSFXSLTransformation">MSF XSL Transformation</option>
+                            <option value="MSFXMLToJSONConversion">MSF XML to JSON Conversion</option>
+                            <option value="MSFJDBCRead">MSF JDBC Read</option>
+                            <option value="MSFJDBCTransaction">MSF JDBC Transaction</option>
+                            <option value="MSFResponseGenerator">MSF Response Generator</option>
+                            <option value="MSFREST">MSF Rest Invocation</option>
+                            <option value="MSFRESTProxy">MSF Rest Proxy</option>
+                            <option value="MSFSOAPInvocation">MSF SOAP Invocation</option>
+                            <option value="MSFTitanQuery">MSF Titan Query</option>
+                            <option value="MSFHBaseQuery">MSF HBase Query</option>
+                            <option value="MSFKafkaSend">MSF Kafka Send</option>
+                            <option value="MSFMQSend">MSF MQ Send</option>
+                            <option value="MSFParallelProcessing">MSF Parallel Processing</option>
+                            <option value="MSFDataRelatiohship">MSF Data Relationship</option>
+                            <option value="MSFGlobalExceptionHandler">MSF Global Exception Handler</option>
+                            <option value="MSFExceptionHandler">MSF Custom Exception Handler</option>
+                            <option value="Custom">Custom</option>
+
+
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="model-close">Close</button>
+                <button type="button" class="btn btn-primary" id="add-new-step" onclick="addStep()">Add New Step
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="uploadNewConfigModel" tabindex="-1" role="dialog"
+     aria-labelledby="uploadNewConfigModelTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="uploadNewConfigModelTitle">Upload New Config</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="upload-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file" class="col-form-label">Select Configuration Excel:</label>
+                        <input type="file" name="file" class="form-control" id="file" required="true"
+                               file-model="mapping_file" accept="xlsx\.xls,.xlsx">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="modelClose">Close</button>
+                <button type="button" class="btn btn-primary" id="add-new-config" onclick="uploadExcel()">Upload Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addUpdateScenarioModel" tabindex="-1" role="dialog"
+     aria-labelledby="addUpdateScenarioModelTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addUpdateScenarioModelTitle">Add/Update Scenario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="idAddUpdateScenarioForm">
+                    <div class="form-group row">
+                        <div class="col-sm-2">Scenarios:</div>
+                        <div class="col-sm-10" id="divScenarioCheckList">
+
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="updateScenario()">Update Scenario
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addLoggingAndMonitoringModel" tabindex="-1" role="dialog"
+     aria-labelledby="addUpdateScenarioModelTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addLoggingAndMonitoringTitle">Add/Update Monitoring</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="idaddLoggingAndMonitoringForm">
+                    <div class="form-group">
+                        <label for="processor-class" class="col-form-label">Adaptor Type:</label>
+                        <select class="form-control" id="monitoring-class">
+                            <option value="com.msf.adaptor.monitoring.MSFJDBCMonitorAdaptor">JDBC Adaptor</option>
+                            <option value="com.msf.adaptor.monitoring.MSFKafkaMonitorAdaptor">Kafka Adaptor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="step-name" class="col-form-label">DataSource Name:</label>
+                        <input type="text" class="form-control" id="datasource-name" required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="step-name" class="col-form-label">Template Name:</label>
+                        <input type="text" class="form-control" id="template-name" required="true">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="addUpdateMonitoring()">Add/Update Monitoring
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="../../lib/jquery-3.3.1.min.js"></script>
+<script src="../../lib/popper.min.js"></script>
+<script src="../../lib/bootstrap.min.js"></script>
+<script src="../../lib/handlebars-v4.0.11.js"></script>
+<script src="../../lib/jquery.dataTables.min.js"></script>
+<script src="../../lib/dataTables.bootstrap4.min.js"></script>
+<script src="../../lib/jsoneditor.min.js"></script>
+<script src="https://cdn.rawgit.com/ariutta/svg-pan-zoom/master/dist/svg-pan-zoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js"></script>
+
+
+<script src="../../js/common/util.js"></script>
+<script src="../../js/ServiceConfiguration/config_details.js"></script>
+
+<script id="global-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">Global Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtAPIName">API Name</label>
+                    <input type="text" class="form-control" id="txtAPIName" placeholder="API Name" readonly
+                           value='{{definition.name}}'>
+                </div>
+                <div class="form-group">
+                    <label for="txtAPIDesc">API Description</label>
+                    <textarea class="form-control" id="txtAPIDesc">{{definition.desc}}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="txtTrackingID">Tracking ID</label>
+                    <input type="text" class="form-control" id="txtTrackingID" placeholder="Tracking ID"
+                           value="{{properties.tracking-id}}">
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idGlobalSave">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="global-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">Global Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Add API Connect Security
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">Add Data Power Security</a>
+                <a href="#" class="list-group-item list-group-item-action"
+                   onclick="javascript:$('#addLoggingAndMonitoringModel').modal()">Define Logging & Monitoring</a>
+            </div>
+        </div>
+    </div>
+
+</script>
+<script id="Endpoint-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">Endpoint Properties</div>
+        <!--Form for REST Endpoint which will be displayed when the Endpoint is REST-->
+        <div class="card-body" id="restEPForm">
+            <form id="RESTEndpointForm">
+                <div class="form-group">
+                    <label for="txtURI">URI</label>
+                    <textarea class="form-control" id="txtURI">{{uri}}</textarea>
+                </div>
+                <div class="form-group">
+                    <label>Service Type</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="httpTypeRadio" id="getRadio"
+                               value="GET" checked>
+                        <label class="form-check-label" for="getRadio">
+                            GET
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="httpTypeRadio" id="postRadio"
+                               value="POST">
+                        <label class="form-check-label" for="postRadio">
+                            POST
+                        </label>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idEndpointSave">Save</button>
+            </form>
+        </div>
+        <!--Form for Messaging Endpoint which will be displayed when the Endpoint is MQ-->
+        <div class="card-body" id="mqEPForm">
+            <form id="MQEndpointForm">
+                <div class="form-group">
+                    <label>Messaging Provider</label>
+                        <select id="MPType">
+                            <!--option value="ibm_mq">IBM MQ</option-->	
+                            <option value="active_mq">Active MQ</option>
+                        </select>                    
+                </div>
+                <div class="form-group">
+                    <label for="txtQueue">Queue Name</label>
+                    <textarea class="form-control" id="txtQueue">{{queueName}}</textarea>
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idQueueEndpointSave">Save</button>
+            </form>
+        </div>
+    </div>
+</script>
+
+<script id="Endpoint-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">Endpoint Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action" onclick="downloadRESTEndpointCode()">
+                    Download Java Endpoint Code
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFInputValidation-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Input Validation Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" id="txtProcessorType" placeholder="API Name" readonly
+                           value='{{definition.processor-type}}'>
+
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFInputValidation-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Input Validation Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Add/Update Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Parameters
+                </a>
+                <a href="#" class="list-group-item list-group-item-action"
+                   onclick="javascript:bBulkUpload=false;$('#uploadNewConfigModel').modal()">
+                    Upload Excel
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Download Excel Template
+                </a>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFJDBCRead-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF JDBC Read Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type" readonly
+                           value='{{definition.processor-type}}'>
+
+                    <label for="txtJDBCReadOutput">Output Key Name</label>
+                    <input type="text" class="form-control" placeholder="Output Key Name" id="txtJDBCReadOutput"
+                           value='{{generic.output}}'>
+
+                    <label for="txtJDBCQuery">SQL Query</label>
+                    <textarea class="form-control" id="txtJDBCQuery">{{properties.query}}</textarea>
+                    <label>Query Type</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="exampleRadios" id="jdbcQueryType1"
+                               value="option1" checked>
+                        <label class="form-check-label" for="jdbcQueryType1">
+                            Single Row
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="exampleRadios" id="jdbcQueryType2"
+                               value="option2">
+                        <label class="form-check-label" for="jdbcQueryType2">
+                            Multiple Row
+                        </label>
+                    </div>
+
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFJDBCRead-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF JDBC Read Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action" onclick="addUpdateScenario()">
+                    Add/Update Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Parameters
+                </a>
+                <a href="#" class="list-group-item list-group-item-action"
+                   onclick="javascript:bBulkUpload=false;$('#uploadNewConfigModel').modal()">
+                    Upload Excel
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Download Excel Template
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFResponseGenerator-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Response Generator Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type" readonly
+                           value='{{definition.processor-type}}'>
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFResponseGenerator-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Response Generator Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action"
+                   onclick="javascript:bBulkUpload=false;$('#uploadNewConfigModel').modal()">
+                    Upload Excel
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Download Excel Template
+                </a>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFJSONValidation-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF JSON Validation Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type" readonly
+                           value='{{definition.processor-type}}'>
+                    <label for="txtJSONValidationOutput">Output Key Name</label>
+                    <input type="text" class="form-control" placeholder="Output Key Name" id="txtJSONValidationOutput"
+                           value='{{generic.output}}'>
+                    <label for="txtJSONValidationInputJson">Input Key Name</label>
+                    <input type="text" class="form-control" placeholder="Output Key Name"
+                           id="txtJSONValidationInputJson"
+                           value='{{properties.input_json}}'>
+                    <label for="txtJSONValidationSchemaName">Schema File Name</label>
+                    <input type="text" class="form-control" placeholder="Output Key Name"
+                           id="txtJSONValidationSchemaName"
+                           value='{{properties.schema_name}}'>
+                </div>
+
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFJSONValidation-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Response Generator Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action"
+                   onclick="javascript:bBulkUpload=false;$('#uploadNewConfigModel').modal()">
+                    Upload Schema
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Test Schema
+                </a>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFJDBCTransaction-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Response Generator Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type" readonly
+                           value='{{definition.processor-type}}'>
+                    <label for="txtJDBCTranOutput">Output Key Name</label>
+                    <input type="text" class="form-control" placeholder="Output Key Name" id="txtJDBCTranOutput"
+                           value='{{generic.output}}'>
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFJDBCTransaction-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Response Generator Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action"
+                   onclick="javascript:bBulkUpload=false;$('#uploadNewConfigModel').modal()">
+                    Upload Excel
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Download Excel Template
+                </a>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+
+<script id="MSFREST-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type"
+                           value='{{definition.processor-type}}' id="idRESTProcessor">
+                    <label>Output Key Name</label>
+                    <input type="text" class="form-control" placeholder="Output Key Name" id="txtRESTOutput"
+                           value='{{generic.output}}'>
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idRESTSave">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFREST-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+
+<script id="Custom-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type"
+                           value='{{definition.processor-type}}' id="idCustomProcessor">
+                    <label>Output Key Name</label>
+                    <input type="text" class="form-control" placeholder="Output Key Name" id="txtCustomOutput"
+                           value='{{generic.output}}'>
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idCustomSave">Save</button>
+            </form>
+        </div>
+    </div>
+
+</script>
+
+<script id="Custom-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action"
+                   onclick="downloadCustomProcessorCode()">
+                    Download Java Class
+                </a>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+
+<script id="MSFSOAPInvocation-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type"
+                           value='{{definition.processor-type}}' id="idSOAPProcessor">
+                    <label>Output Key Name</label>
+                    <input type="text" class="form-control" placeholder="Output Key Name" id="txtSOAPOutput"
+                           value='{{generic.output}}'>
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idSOAPSave">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFSOAPInvocation-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+
+<script id="MSFParallelProcessing-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Parallel Processing Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" id="txtParallelProcessingProcessorType"
+                           placeholder="API Name" readonly
+                           value='{{definition.processor-type}}'>
+
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFParallelProcessing-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Parallel Processing Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Add/Update Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Add Preconditions
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+</script>
+
+
+<script id="MSFExceptionHandler-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Exception Handler Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" id="txtExceptionHandlerProcessorType"
+                           placeholder="API Name" readonly
+                           value='{{definition.processor-type}}'>
+
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFExceptionHandler-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Exception Handler Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Add/Update Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Add Preconditions
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFGlobalExceptionHandler-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Global Exception Handler Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" id="txtGlobalExceptionHandlerProcessorType"
+                           placeholder="API Name" readonly
+                           value='{{definition.processor-type}}'>
+
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFGlobalExceptionHandler-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF Global Exception Handler Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Add/Update Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Add Preconditions
+                </a>
+
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="End-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF End Step</div>
+    </div>
+
+</script>
+
+<script id="End-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">MSF End Step</div>
+     </div>
+
+</script>
+
+
+
+
+<script id="MSFJSONTransformation-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type" readonly
+                           value='{{definition.processor-type}}' id="idMSFJSONTransformationProcessor">
+
+                    <label>Output Key Name</label>
+                    <input type="text" class="form-control" placeholder="Output Key Name" id="txtMSFJSONTransformationOutput"
+                           value='{{generic.output}}'>
+
+                    <label>Service Type</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="httpTypeRadio" id="JSON_XML_Radio"
+                               value="XML" checked>
+                        <label class="form-check-label" for="JSON_XML_Radio">
+                            XML
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="httpTypeRadio" id="JSON_JSON_Radio"
+                               value="JSON">
+                        <label class="form-check-label" for="JSON_JSON_Radio">
+                            JSON
+                        </label>
+                    </div>
+
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idMSFJSONTransformationSave">Save</button>
+            </form>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="MSFJSONTransformation-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action"
+                   onclick="javascript:bBulkUpload=false;$('#uploadNewConfigModel').modal()">
+                    Upload Excel
+                </a>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+
+<script id="MSFTitanQuery-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type"
+                           value='{{definition.processor-type}}' id="idMSFTitanQueryProcessor">
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idMSFTitanQuerySave">Save</button>
+            </form>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFTitanQuery-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action"
+                   onclick="downloadCustomProcessorCode()">
+                    Download Java Class
+                </a>
+            </div>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFHBaseQuery-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type"
+                           value='{{definition.processor-type}}' id="idMSFHBaseQueryProcessor">
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idMSFHBaseQuerySave">Save</button>
+            </form>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFHBaseQuery-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action"
+                   onclick="downloadCustomProcessorCode()">
+                    Download Java Class
+                </a>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<script id="MSFMQSend-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type"
+                           value='{{definition.processor-type}}' id="idMSFMQSend">
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idMSFMQSendSave">Save</button>
+            </form>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFMQSend-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="MSFXMLToJSONConversion-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type"
+                           value='{{definition.processor-type}}' id="idMSFXMLToJSONConversion">
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idMSFXMLToJSONConversionSave">Save</button>
+            </form>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFXMLToJSONConversion-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<script id="MSFXSLTransformation-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type"
+                           value='{{definition.processor-type}}' id="idMSFXSLTransformation">
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idMSFXSLTransformationSave">Save</button>
+            </form>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFXSLTransformation-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Upload Stylesheet
+                </a>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script id="MSFDataRelatiohship-template-property" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <form>
+                <div class="form-group">
+                    <label for="txtProcessorType">Processor Type</label>
+                    <input type="text" class="form-control" placeholder="Processor Type"
+                           value='{{definition.processor-type}}' id="idMSFDataRelatiohship">
+                </div>
+                <button type="button" class="btn btn-sm btn-primary fa-pull-right" id="idMSFDataRelatiohshipSave">Save</button>
+            </form>
+        </div>
+    </div>
+
+</script>
+
+<script id="MSFDataRelatiohship-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">{{definition.name}} Actions</div>
+        <div class="card-body">
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action">
+                    Edit Scenario
+                </a>
+                <a href="#" class="list-group-item list-group-item-action">
+                    Upload Excel
+                </a>
+            </div>
+        </div>
+    </div>
+</script>
+
+
+<!--Other Templates-->
+<script id="scenario-checkbox-template" type="text/x-handlebars-template">
+    {{#each this}}
+    <div class="form-check">
+        <input class="form-check-input scenario-check" type="checkbox" id="gridCheck{{@index}}" value="{{this}}">
+        <label class="form-check-label" for="gridCheck{{@index}}">
+            {{this}}
+        </label>
+    </div>
+    {{/each}}
+</script>
+
+</body>
+</html>

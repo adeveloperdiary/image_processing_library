@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<!-- Required meta tags -->
+<meta charset="utf-8">
+<meta name="viewport"
+	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="../../css/bootstrap.min.css" />
+<link rel="stylesheet" href="../../css/fontawesome-all.min.css" />
+<link rel="stylesheet" href="../../css/jquery.dataTables.min.css" />
+<link rel="stylesheet" href="../../css/dataTables.bootstrap4.min.css" />
+<link rel="stylesheet" href="../../css/style.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+<link rel="stylesheet" type="text/css"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css" />
+<title>Microservices Self Service Portal</title>
+<link rel="icon" type="image/png" href="../../images/logo_dark.png" />
+</head>
+<body>
+	<nav class="navbar  navbar-dark bg-primary">
+		<a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Bootstrap">
+			<img src="../../images/logo.png" height="40px" /> <span
+			class="navbar-brand mb-0 font-weight-bold">Self Service Portal</span>
+			<a href="#" class="btn btn-primary" style="float: right;" id="user"><span
+				id="profile"></span></a>
+		</a>
+	</nav>
+	<div class="alert alert-dismissible fade" role="alert"
+		style="position: fixed; top: 40px; left: 30%; width: 680px">
+		<span id="alert-msg"></span>
+	</div>
+	<nav aria-label="breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item active"><a href="../dashboard.html">Home</a></li>
+			<li class="breadcrumb-item active" aria-current="page">Model
+				Designer</li>
+		</ol>
+	</nav>
+
+	<div class="btn-group mr-2 " role="group">
+		<button type="button" class="btn btn-outline-info ml-3">New</button>
+		<button type="button" class="btn btn-outline-info">Open</button>
+		<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#myModal">Import</button>
+	</div>
+
+	<div class="btn-group mr-2" role="group">
+		<button type="button" class="btn btn-outline-info">Save</button>
+		<button type="button" class="btn btn-outline-info">Export</button>
+		<button type="button" class="btn btn-outline-info">Delete</button>
+	</div>
+
+	<div class="btn-group mr-2" role="group">
+		<button type="button" class="btn btn-outline-info">New
+			Service</button>
+	</div>
+	<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+	<div class="container-fluid mt-3">
+	
+		<div class="row">	
+		
+			<div class="col-sm-2">		
+
+				<div class="card">
+					<div class="card-header">
+						Entities <a href="#"><span class="fas fa-search float-right "
+							aria-hidden="true"></span></a> <a href="#"><span
+							class="fas fa-minus-circle float-right mr-2" aria-hidden="true"></span></a>
+						<a href="#"><span class="fas fa-plus-circle float-right mr-2"
+							aria-hidden="true"></span></a>
+					</div>
+					<div class="card-body">
+						<input class="form-control" type="text"
+							placeholder="Enter Entity Name" aria-label="Search">
+							<div id="models"></div>					
+						<hr style="border-top: dotted 1px;" />
+
+						<div class="btn-group-vertical mt-2  btn-block">
+							<button type="button" class="btn btn-outline-secondary" disabled>Provider</button>
+							<button type="button" class="btn btn-outline-secondary " disabled>Party</button>
+							<button type="button" class="btn btn-outline-secondary" disabled>Account</button>
+							<button type="button" class="btn btn-outline-secondary" disabled>Contact</button>
+						</div>
+					</div>
+
+</div>				
+				
+</div>
+			<div class="col-sm-7">
+				<div class="card">
+					<div class="card-header">Model Designer</div>
+					<div class="card-body">
+
+						<div class="container-fluid" style="padding-bottom: 10px">
+							<div class="row justify-content-md-center">
+								<ul class="nav">
+									<li class="nav-item" style="padding-bottom: 10px">
+										<button type="button" class="btn btn-sm btn-dark" id="addStep">
+											<i class="fas fa-plus-square text-success"
+												style="margin-right: 5px"></i>Add Entity
+										</button>
+									</li>
+
+									<li class="nav-item">
+										<button type="button" class="btn btn-sm btn-dark"
+											id="deleteElement" onclick="deleteElement()" disabled>
+											<i class="fas fa-trash text-danger" style="margin-right: 5px"></i>Remove
+											Entity
+										</button>
+									</li>
+
+									<li class="nav-item">
+										<button type="button" class="btn btn-sm btn-dark"
+											id="addSubStep" >
+											<i class="fas fa-plus-square text-success"
+												style="margin-right: 5px"></i>Connect Entity
+										</button>
+									</li>
+
+									<li class="nav-item">
+										<button type="button" class="btn btn-sm btn-dark"
+											id="addSubStep" disabled>
+											<i class="fas fa-plus-square text-success"
+												style="margin-right: 5px"></i>Settings
+										</button>
+									</li>
+
+									<li class="nav-item">
+										<button type="button" class="btn btn-sm btn-dark"
+											id="addSubStep" disabled>
+											<i class="fas fa-plus-square text-success"
+												style="margin-right: 5px"></i>Save
+										</button>
+									</li>
+
+								</ul>
+							</div>
+						</div>
+						<div style="margin: 0 auto;" id="container">
+							<div id="designer" style="border: 1px solid #dbdbdb"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<div class="card">
+					<div class="card-header">
+						Attributes <a href="#"><span
+							class="fas fa-search float-right " aria-hidden="true"></span></a> <a
+							href="#"><span class="fas fa-minus-circle float-right mr-2"
+							aria-hidden="true"></span></a> <a href="#"><span
+							class="fas fa-plus-circle float-right mr-2" aria-hidden="true"></span></a>
+
+					</div>
+					<div class="card-body">
+						<input class="form-control" type="text"
+							placeholder="Enter Attribute Name" aria-label="Search" id="attr-search">
+						<div id="jstree" class="mt-2">							
+
+						</div>
+
+
+					</div>
+				</div>
+				<div class="card  mt-3">
+					<div class="card-header">Definition</div>
+					<div class="card-body">
+						<form>
+							<div class="row">
+								<label for="lname" class="col-sm-4 form-group form-label">Name:</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-group form-control" id="def-name"
+										placeholder="party_id">
+								</div>
+							</div>
+
+							<div class="row">
+								<label for="dtype" class="col-sm-4 form-group form-label">Type:</label>
+								<div class="col-sm-8">
+									<select id="dtype" class="form-control">
+										<option selected>String</option>
+										<option>Integer</option>
+										<option>Float</option>
+										<option>Boolean</option>
+										<option>Object</option>
+										<option>Array</option>
+									</select>
+								</div>
+							</div>
+
+							<div class="row">
+								<label for="length" class="col-sm-4 form-group form-label">Length:</label>
+								<div class="col-sm-8">
+									<input type="text" class="form-group form-control" id="length"
+										placeholder="1">
+								</div>
+							</div>
+
+						</form>
+					</div>
+				</div>
+				<div class="card  mt-3">
+					<div class="card-header">
+						Service List <a href="#"><span
+							class="fas fa-search float-right mr-2" aria-hidden="true"></span></a>
+
+					</div>
+					<div class="card-body">
+					
+					<div class="btn-group-vertical mt-2  btn-block">
+							<button type="button" class="btn btn-outline-secondary">/v1/parties?q=partyId</button>
+							<button type="button" class="btn btn-outline-secondary ">/v2/accounts?q=partyId</button>
+							<button type="button" class="btn btn-outline-secondary">/v1/provider?q=partyId</button>
+							<button type="button" class="btn btn-outline-secondary">v1/search?q=id</button>
+						</div>
+					
+					
+					
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+<!-- ---- Popup code -->
+
+<!-- Button to Open the Modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+  Open modal
+</button>
+
+<!-- The Modal -->
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Upload Models</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+       
+  <div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+  </div>
+  <div class="custom-file">
+    <input type="file" class="custom-file-input" id="inputGroupFile01"
+      aria-describedby="inputGroupFileAddon01">
+    <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+  </div>
+</div>
+       
+       
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+		
+	
+		
+		
+		
+		
+	</div>
+	<footer class="footer">
+		<div class="container">
+			<span class="text-muted">Copyrighted by <a>Cognizant
+					Technology Solutions</a></span>
+		</div>
+	</footer>
+	
+<script id="model-designer-entities" type="text/x-handlebars-template">
+						<div class="btn-group-vertical mt-2  btn-block">
+						{{#each imported.objects as |model|}}
+							<button type="button" id="drag" class="btn btn-outline-secondary" data-id="{{model._id}}">{{model.name}}</button>						
+						{{/each}}						
+</div>						
+</script>	
+	
+<script id="model-designer-attributes" type="text/x-handlebars-template">
+<ul>
+{{#each imported.objects as |model|}}
+								<li>{{model.name}}</li>							
+									<ul>
+			{{#each model.attributes as |child|}}
+										<li id="child_node_1">{{child.name}}</li>
+										{{/each}}
+									</ul>
+							
+								</li>
+{{/each}}
+
+</ul>
+
+</script>
+	
+	
+	<!-- Optional JavaScript -->
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="../../lib/jquery-3.3.1.min.js"></script>
+	<script src="../../lib/popper.min.js"></script>
+	<script src="../../lib/bootstrap.min.js"></script>
+	<script src="../../lib/handlebars-v4.0.11.js"></script>
+	<script src="../../lib/jquery.dataTables.min.js"></script>
+	<script src="../../lib/dataTables.bootstrap4.min.js"></script>
+	<script src="../../js/common/util.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js"></script>
+	<script src="../../js/ModelDesign/er_index.js"></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="../../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../css/style.css">
+
+    <title>API UI</title>
+    <link rel="icon" type="image/png" href="../../images/logo_dark.png">
+    <style>
+        .shadow {
+            -webkit-filter: drop-shadow( 0px 3px 3px rgba(0,0,0,.5) );
+            filter: drop-shadow( 0px 3px 3px rgba(0,0,0,.5) );
+        }
+
+        .line {
+            fill: none;
+            stroke: #f1c40f;
+            stroke-width: 2px;
+        }
+        .smoothline {
+            fill: none;
+            stroke: #6610f2;
+            stroke-width: 2px;
+        }
+        .area {
+            fill: #6610f2;
+            opacity: 0.3;
+        }
+        .circle {
+            stroke: #6610f2;
+            stroke-width: 2px;
+            fill: #FFF;
+        }
+        .grid {
+            stroke: #DDD;
+            stroke-width: 1px;
+            fill: none;
+        }
+
+        .y_axis_left text{
+            fill: #28a745;
+        }
+
+        .y_axis_right text{
+            fill: #dc3545;
+        }
+
+    </style>
+
+</head>
+<body>
+<nav class="navbar  navbar-dark bg-primary">
+    <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Bootstrap">
+        <img src="../../images/logo.png" height="40px"/>
+        <span class="navbar-brand mb-0 font-weight-bold">Self Service Portal</span>
+
+        <a href="#" class="btn btn-primary" style="float: right;" id="user"><span id="profile"></span></a>
+
+    </a>
+</nav>
+
+<div class="alert alert-dismissible fade" role="alert" style="position: fixed;top:40px;left:30%;width:680px">
+    <span id="alert-msg"></span>
+</div>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active"><a href="../dashboard.html">Home</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Monitoring Dashboard</li>
+    </ol>
+</nav>
+<div class="container-fluid h-100">
+    <div class="row justify-content-md-center">
+        <div class="col-lg-4" >
+            <div class="card">
+                <div class="card-header">Total Volume</div>
+                <div class="card-body" id="divColumn1Property">
+                    <svg height="300" id="totalVolume">
+                        <defs>
+                            <linearGradient id="totalVolumeGradient" x1="0%" y1="100%" x2="0%" y2="0%" spreadMethod="pad">
+                                <stop offset="10%" stop-color="#fff" stop-opacity=".4"/>
+                                <stop offset="80%" stop-color="#007bff" stop-opacity=".4"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-lg-4" >
+            <div class="card">
+                <div class="card-header">Total Error</div>
+                <div class="card-body" id="divColumn2Property">
+                    <svg height="300" id="totalErrorVolume">
+                        <defs>
+                            <linearGradient id="totalErrorVolumeGradient" x1="0%" y1="100%" x2="0%" y2="0%" spreadMethod="pad">
+                                <stop offset="10%" stop-color="#fff" stop-opacity=".4"/>
+                                <stop offset="80%" stop-color="#dc3545" stop-opacity=".4"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4" >
+            <div class="card">
+                <div class="card-header">Real-time Service Call</div>
+                <div class="card-body">
+                    <svg height="300" id="realTimeData">
+
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="row justify-content-md-center">
+        <div class="col-lg-4" >
+            <div class="card">
+                <div class="card-header">Most Used Service</div>
+                <div class="card-body">
+                    <svg height="300" id="mostUsedServices">
+
+                    </svg>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-lg-4" >
+            <div class="card">
+                <div class="card-header">Volume by Service</div>
+                <div class="card-body">
+                    <svg height="300" id="serviceVolume">
+
+                    </svg>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4" >
+            <div class="card">
+                <div class="card-header">TBD</div>
+                <div class="card-body" id="divColumn3Property">
+                    <svg height="300" id="serviceVolume">
+
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">Copyrighted by <a>Cognizant Technology Solutions</a></span>
+    </div>
+</footer>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="../../lib/jquery-3.3.1.min.js"></script>
+<script src="../../lib/popper.min.js"></script>
+<script src="../../lib/bootstrap.min.js"></script>
+<script src="../../lib/moment.js"></script>
+<script src="../../lib/handlebars-v4.0.11.js"></script>
+<script src="../../lib/d3.v5.min.js"></script>
+<script src="../../js/common/util.js"></script>
+<script src="../../js/monitoring/monitoring_dashboard.js"></script>
+</body>
+</html>

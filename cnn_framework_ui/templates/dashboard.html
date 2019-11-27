@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/bootstrap.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/style.css") }}">
+
+    <title>API UI</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename="images/logo_dark.png") }}">
+</head>
+<body>
+<nav class="navbar  navbar-dark bg-primary">
+    <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Bootstrap">
+        <img src="{{ url_for('static', filename="images/logo.png") }}" height="50px"/>
+        <span class="navbar-brand mb-0 font-weight-bold" style="padding-left: 10px;font-size: 25px;vertical-align: middle">CNN Executor Framework</span>
+        <a href="#" class="btn btn-primary" style="float: right;" id="user"><span id="profile"></span></a>
+    </a>
+</nav>
+<div class="alert alert-dismissible fade" role="alert" style="position: fixed;top:40px;left:30%;width:680px">
+    <span id="alert-msg"></span>
+</div>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">Home</li>
+    </ol>
+
+</nav>
+<div class="container-fluid h-100">
+    <div class="card-deck">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Design Network</h5>
+                <p class="card-text" style="float: left;width:70%">Create and configure CNN specifications which
+                    will be used by the Microservice Framework to query data lake and generate response using the
+                    Mapping excel.</p>
+                <img src="{{ url_for('static', filename="images/sketch.png") }}" width="100px" height="100px"
+                     style="float: right">
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Last updated 3 mins ago</small>
+                <a href="/list-projects" class="btn-sm btn-primary" style="float: right;">Open</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body" style="color:#AAAAAA">
+                <h5 class="card-title">Monitoring Dashboard</h5>
+                <p class="card-text" style="float: left;width:70%">Dashboard to display statistics of service
+                    invocations, trend etc</p>
+                <img src="{{ url_for('static', filename="images/monitoring_dashboard.png") }}" width="100px"
+                     height="100px" style="float: right;opacity:0.4">
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Last updated 3 mins ago</small>
+                <a href="Monitoring/monitoring_dashboard.html" class="btn-sm btn-secondary"
+                   style="float: right;">Open</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Transaction Monitoring</h5>
+                <p class="card-text" style="float: left;width:70%">Monitor logs and performance of existing services</p>
+                <img src="{{ url_for('static', filename="images/analysis.png") }}" width="100px" height="100px"
+                     style="float: right">
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">Last updated 3 mins ago</small>
+                <a href="Monitoring/monitoring_index.html" class="btn-sm btn-primary" style="float: right;">Open</a>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<footer class="footer" style="padding: 20px 0;color: #888;text-align: center;background: #eaeff8;">
+    <div class="container">
+        <span class="text-muted">Copyrighted by <a>Cognizant Technology Solutions</a></span>
+    </div>
+</footer>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="{{ url_for('static', filename="lib/jquery-3.3.1.min.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/popper.min.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/bootstrap.min.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/handlebars-v4.0.11.js") }}"></script>
+<script src="{{ url_for('static', filename="js/common/util.js") }}"></script>
+<script src="{{ url_for('static', filename="js/dashboard/dashboard.js") }}"></script>
+</body>
+</html>

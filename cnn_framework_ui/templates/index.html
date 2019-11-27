@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/bootstrap.min.css")}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/style.css")}}">
+
+    <title>CNN Executor Framework</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename="images/logo_dark.png")}}">
+</head>
+
+<body class="my-login-page">
+<nav class="navbar  navbar-dark bg-primary">
+    <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Bootstrap">
+        <img src="{{ url_for('static', filename="images/logo.png")}}" height="50px"/>
+        <span class="navbar-brand mb-0 font-weight-bold">CNN Executor Framework</span>
+    </a>
+</nav>
+<section class="h-100">
+    <div class="container h-100">
+        <div class="row justify-content-md-center h-100">
+            <div class="card-wrapper">
+                <div class="brand justify-content-md-center">
+                    <img src="{{ url_for('static', filename="images/logo_large.png")}}">
+                </div>
+                <div class="card fat">
+                    <div class="card-body">
+                        <h4 class="card-title">Login</h4>
+                        <form method="POST">
+
+                            <div class="form-group">
+                                <label for="username">User Name</label>
+
+                                <input id="username" type="text" class="form-control" name="emauser_nameil" value=""
+                                       autofocus>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password
+                                    <a href="forgot.html" class="float-right">
+                                        Forgot Password?
+                                    </a>
+                                </label>
+                                <input id="password" type="password" class="form-control" name="password" data-eye>
+                            </div>
+
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" name="remember"> Remember Me
+                                </label>
+                            </div>
+
+                            <div class="form-group no-margin">
+                                <button type="button" class="btn btn-primary btn-block" id="bttnLogin">
+                                    Login
+                                </button>
+                            </div>
+                            <div class="margin-top20 text-center">
+                                Don't have an account? <a href="register.html">Create One</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="container-fluid">
+
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <span class="text-muted">Copyrighted by <a>Cognizant Technology Solutions</a></span>
+    </div>
+</footer>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="{{ url_for('static', filename="lib/jquery-3.3.1.min.js")}}"></script>
+<script src="{{ url_for('static', filename="lib/popper.min.js")}}"></script>
+<script src="{{ url_for('static', filename="lib/bootstrap.min.js")}}"></script>
+<script src="{{ url_for('static', filename="lib/handlebars-v4.0.11.js")}}"></script>
+<script src="{{ url_for('static', filename="js/index/index.js")}}"></script>
+</body>
+</html>

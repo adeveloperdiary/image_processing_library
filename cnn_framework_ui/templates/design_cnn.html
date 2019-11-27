@@ -1,0 +1,2131 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/bootstrap.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/fontawesome-all.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/jquery.dataTables.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/dataTables.bootstrap4.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/jsoneditor.min.css") }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/style.css") }}">
+
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename="images/logo_dark.png") }}">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.css"/>
+    <title>CNN Executor Framework</title>
+</head>
+
+<body>
+
+<nav class="navbar  navbar-dark bg-primary">
+    <a class="navbar-brand mr-0 mr-md-2" href="/" aria-label="Bootstrap">
+        <img src="{{ url_for('static', filename="images/logo.png") }}" height="50px"/>
+        <span class="navbar-brand mb-0 font-weight-bold"
+              style="padding-left: 10px;font-size: 25px;vertical-align: middle">CNN Executor Framework</span>
+        <a href="#" class="btn btn-primary" style="float: right;" id="user"><span id="profile"></span></a>
+    </a>
+</nav>
+<div class="alert alert-dismissible fade" role="alert" style="position: fixed;top:40px;left:30%;width:680px">
+    <span id="alert-msg"></span>
+</div>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb" style="margin-bottom: 0 !important">
+        <li class="breadcrumb-item">
+            <a href="/dashboard">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="/list-projects">Project List</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page" id="rowkey_val">CNN Designer</li>
+    </ol>
+</nav>
+<div class="container-fluid" style="margin-bottom: 30px;margin-top: 20px">
+    <div class="row justify-content-md-center">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-header">Convolution Neural Network Designer</div>
+                <div class="card-body">
+                    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups"
+                         style="margin-bottom: 10px">
+                        <div class="btn-group mr-2" role="group" aria-label="First group">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="addStep">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="deleteElement"
+                                    onclick="deleteElement()" disabled>
+                                <i class="fas fa-minus"></i>
+                            </button>
+
+                        </div>
+                        <div class="btn-group mr-2" role="group" aria-label="Second group">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="createLink"
+                                    onclick="createLink()" disabled>
+                                <i class="fas fa-arrow-circle-right"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="deleteLink"
+                                    onclick="deleteLink()" disabled>
+                                <i class="fas fa-minus-circle"></i>
+                            </button>
+                        </div>
+                        <div class="btn-group mr-2" role="group" aria-label="Second group">
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="saveConfig">
+                                <i class="fas fa-save"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="toggleView"
+                                    onclick="downloadConfig()">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary" id="deleteConfig">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div style="margin:0 auto;" id="container">
+                        <div id="designer" style="border:1px solid #6e0eab;border-radius: 5px"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div class="container-fluid h-auto" style="margin-bottom: 100px;min-height: 1000px">
+    <div class="row justify-content-md-center">
+        <div class="col-lg-9" id="divColumn1Property">
+
+        </div>
+        <div class="col-lg-3" id="divColumn3Property">
+
+
+        </div>
+    </div>
+</div>
+
+<footer class="footer" style="background: #f3e5ff">
+    <div class="container">
+        <span class="text-muted" style="color:#6e0eab !important;">Copyrighted by <a>adeveloperdiary.com</a></span>
+    </div>
+</footer>
+
+<div class="modal fade" id="addNewStep" tabindex="-1" role="dialog" aria-labelledby="addNewStepTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addNewStepTitle">New Step</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="frmaddNewStep">
+                    <div class="form-group">
+                        <label for="step-name" class="col-form-label">Step Name:</label>
+                        <input type="text" class="form-control" id="step-name" required="true">
+                    </div>
+                    <div class="form-group">
+                        <label for="cnn_workflow" class="col-form-label">Processor:</label>
+                        <select class="form-control" id="cnn_workflow">
+                            <option value="CNNFImageLoader">CNNFImageLoader</option>
+                            <option value="CNNFLabel2Number">CNNFLabel2Number</option>
+                            <option value="CNNFDefaultFeatureExtractor">CNNFDefaultFeatureExtractor</option>
+                            <option value="CNNFTrainTestSplit">CNNFTrainTestSplit</option>
+                            <option value="CNNFCustomKerasModel">CNNFCustomKerasModel</option>
+                            <option value="CNNFDefaultOptimization">CNNFDefaultOptimization</option>
+                            <option value="CNNFDefaultTraining">CNNFDefaultTraining</option>
+                            <option value="CNNFDefaultModelEvaluation">CNNFDefaultModelEvaluation</option>
+                            <option value="CNNFTransferLearning">CNNFTransferLearning</option>
+                            <option value="Custom">Custom</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="model-close">Close</button>
+                <button type="button" class="btn btn-primary" id="add-new-step" onclick="addStep()">Add New Step
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="IP_ImageResize" tabindex="-1" role="dialog" aria-labelledby="IP_ImageResizeTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ImageResize Pre-Processor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="txtStepName">Output Width</label>
+                            <input type="number" class="form-control" id="txtWidth" placeholder="32">
+                            <small class="form-text text-muted">
+                                Output width of the image.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtStepClass">Output Height</label>
+                            <input type="number" class="form-control" id="txtHeight" placeholder="32">
+                            <small class="form-text text-muted">
+                                Output height of the image.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="IP_IR_AutoCrop">
+                                <label class="form-check-label" for="IP_IR_AutoCrop">
+                                    Auto Crop
+                                </label>
+                                <small class="form-text text-muted">
+                                    In case the source image is not square (1x1), use this feature to crop the larger
+                                    side (width or height) first then apply resize. This helps to remove deformations.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtInterpolation">Interpolation</label>
+                            <input type="number" class="form-control" id="txtInterpolation" placeholder="0" value="3">
+                            <small class="form-text text-muted">
+                                By default <b>cv2.INTER_AREA</b> is used for interpolation.
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="add-new-image-resize-pre-processor">Add/Update
+                    <button type="button" class="btn btn-danger" id="delete-new-image-resize-pre-processor">Delete
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" id="model-close">Close</button>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="IP_ImageToArrayPreprocessor" tabindex="-1" role="dialog"
+     aria-labelledby="IP_ImageToArrayPreprocessorTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ImageToArray Pre-Processor</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <small class="form-text text-muted">
+                                <b>Notes: </b> Uses keras.preprocessing.image.img_to_array function.
+                            </small>
+                            <input class="form-check-input" type="checkbox" id="IP_IA_Normalize">
+                            <label class="form-check-label" for="IP_IA_Normalize">
+                                Normalize Image
+                            </label>
+                            <small class="form-text text-muted">
+                                <b>Normalize Image</b> will divide each pixel by 255.0
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="add-image-to-array-pp">Add/Update</button>
+                <button type="button" class="btn btn-danger" id="delete-image-to-array-pp">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="model-close">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Callbacks_LearningRateScheduler" tabindex="-1" role="dialog"
+     aria-labelledby="Callbacks_LearningRateSchedulerTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">LearningRateScheduler Callback</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <small class="form-text text-muted">
+                                <b>Notes: </b> Uses keras.callbacks.LearningRateScheduler function.
+                            </small>
+                            <label class="form-check-label" for="listLearningRateScheduler">
+                                Select Implementation
+                            </label>
+                            <select id="listLearningRateScheduler" class="form-control">
+                                <option value="Choose..." selected>Choose...</option>
+                                <option value="callbacks.decay.step_decay">callbacks.decay.step_decay</option>
+                            </select>
+                            <small class="form-text text-muted">
+                                Use already implemented LearningRateSchedulers.
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="add-lr-callbacks">Add/Update</button>
+                <button type="button" class="btn btn-danger" id="delete-lr-callbacks">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="model-close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Callbacks_BaseLogger" tabindex="-1" role="dialog"
+     aria-labelledby="Callbacks_BaseLoggerTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">BaseLogger Callback</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <small class="form-text text-muted">
+                                <b>Notes: </b> Uses keras.callbacks.BaseLogger implementation.
+                            </small>
+                            <label class="form-check-label" for="txtBaseLogger">
+                                Checkpoint Path
+                            </label>
+                            <input type="text" class="form-control" id="txtBaseLogger" placeholder="output/checkpoint"
+                                   value="output/checkpoint">
+                            <small class="form-text text-muted">
+                                Use already implemented BaseLogger.
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="add-bl-callbacks">Add/Update</button>
+                <button type="button" class="btn btn-danger" id="delete-bl-callbacks">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="model-close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Callbacks_ModelCheckpoint" tabindex="-1" role="dialog"
+     aria-labelledby="Callbacks_ModelCheckpointTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ModelCheckpoint Callback</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="txtCheckpointPath">Path</label>
+                            <input type="text" class="form-control" id="txtCheckpointPath"
+                                   placeholder="output/checkpoint" value="output/checkpoint">
+                            <small class="form-text text-muted">
+                                Path of the checkpoint files.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtCheckpointFileName">File Name</label>
+                            <input type="text" class="form-control" id="txtCheckpointFileName"
+                                   placeholder="best_weights.hdf5" value="best_weights.hdf5">
+                            <small class="form-text text-muted">
+                                Name of the saved model.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="chkCheckpointBest">
+                                <label class="form-check-label" for="chkCheckpointBest">
+                                    Save Best Only
+                                </label>
+                                <small class="form-text text-muted">
+                                    Instead of saving multiple files, save only the best model.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtCheckpointMonitor">Monitor</label>
+                            <input type="text" class="form-control" id="txtCheckpointMonitor" placeholder="val_loss"
+                                   value="val_loss">
+                            <small class="form-text text-muted">
+                                Monitor based on accuracy/loss
+                            </small>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="add-checkpoint-callbacks">Add/Update</button>
+                <button type="button" class="btn btn-danger" id="delete-checkpoint-callbacks">Delete</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="model-close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bd-example-modal-xl" id="showJSONConfigFile" tabindex="-1" role="dialog"
+     aria-labelledby="showJSONConfigFileTitle"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 800px !important;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">JSON Configuration</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="jsoneditor" style="width: 100%; height:500px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="model-close">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+
+<script src="{{ url_for('static', filename="lib/jquery-3.3.1.min.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/popper.min.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/bootstrap.min.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/handlebars-v4.0.11.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/jquery.dataTables.min.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/dataTables.bootstrap4.min.js") }}"></script>
+
+<script src="{{ url_for('static', filename="lib/ace/ace.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/ace/ext-language_tools.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/ace/mode-python.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/ace/theme-xcode.js") }}"></script>
+<script src="{{ url_for('static', filename="lib/jsoneditor.min.js") }}"></script>
+
+<script src="https://cdn.rawgit.com/ariutta/svg-pan-zoom/master/dist/svg-pan-zoom.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jointjs/2.1.0/joint.js"></script>
+
+
+<script src="{{ url_for('static', filename="js/common/util.js") }}"></script>
+<script src="{{ url_for('static', filename="js/cnn/cnn_design_wf.js") }}"></script>
+<script src="{{ url_for('static', filename="js/cnn/processors/image_loader.js") }}"></script>
+<script src="{{ url_for('static', filename="js/cnn/processors/optimization.js") }}"></script>
+<script src="{{ url_for('static', filename="js/cnn/processors/custom_model.js") }}"></script>
+<script src="{{ url_for('static', filename="js/cnn/processors/train_test_split.js") }}"></script>
+<script src="{{ url_for('static', filename="js/cnn/processors/training.js") }}"></script>
+<script src="{{ url_for('static', filename="js/cnn/processors/model_evaluation.js") }}"></script>
+<script src="{{ url_for('static', filename="js/cnn/processors/feature_extractor.js") }}"></script>
+<script src="{{ url_for('static', filename="js/cnn/processors/transfer_learning.js") }}"></script>
+
+{% raw %}
+
+<script id="global-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">Global Properties</div>
+        <div class="card-body">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px">
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showJSONConfig()">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtStepName">Step Name</label>
+                        <input type="text" class="form-control" id="txtStepName" placeholder="Step Name" readonly
+                               value="{{ definition.name }}">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtStepClass">Step Class</label>
+                        <input type="text" class="form-control" id="txtStepClass" placeholder="Class Name" readonly
+                               value="{{ definition.processor }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtTrainXPlaceHolder">Train_X Placeholder</label>
+                        <input type="text" class="form-control" id="txtTrainXPlaceHolder" placeholder="data"
+                               value="{{#if trainX}}{{trainX}}{{else}}trainX{{/if}}">
+                        <small class="form-text text-muted">
+                            Placeholder for trainX
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtTrainYPlaceHolder">Train_Y Placeholder</label>
+                        <input type="text" class="form-control" id="txtTrainYPlaceHolder" placeholder="labels"
+                               value="{{#if trainY}}{{trainY}}{{else}}trainY{{/if}}">
+                        <small class="form-text text-muted">
+                            Placeholder for trainY
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtTestXPlaceHolder">Test_X Placeholder</label>
+                        <input type="text" class="form-control" id="txtTestXPlaceHolder" placeholder="data"
+                               value="{{#if testX}}{{testX}}{{else}}testX{{/if}}">
+                        <small class="form-text text-muted">
+                            Placeholder for testX
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtTestYPlaceHolder">Test_Y Placeholder</label>
+                        <input type="text" class="form-control" id="txtTestYPlaceHolder" placeholder="labels"
+                               value="{{#if testY}}{{testY}}{{else}}testY{{/if}}">
+                        <small class="form-text text-muted">
+                            Placeholder for testX
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtValidationXPlaceHolder">Validation_X Placeholder</label>
+                        <input type="text" class="form-control" id="txtValidationXPlaceHolder" placeholder="data"
+                               value="{{#if validationX}}{{validationX}}{{else}}validationX{{/if}}">
+                        <small class="form-text text-muted">
+                            Placeholder for validationX
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtValidationYPlaceHolder">ValidationY_Y Placeholder</label>
+                        <input type="text" class="form-control" id="txtValidationYPlaceHolder" placeholder="labels"
+                               value="{{#if validationY}}{{validationY}}{{else}}validationY{{/if}}">
+                        <small class="form-text text-muted">
+                            Placeholder for validationY
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="numEpoch">Epochs</label>
+                        <input type="number" class="form-control" id="numEpoch" placeholder="data"
+                               value="{{#if epochs}}{{epochs}}{{else}}10{{/if}}">
+                        <small class="form-text text-muted">
+                            Placeholder for epochs
+                        </small>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idGlobalSave">Save</button>
+        </div>
+    </div>
+
+
+</script>
+
+<script id="global-template-action" type="text/x-handlebars-template">
+
+    <div class="card">
+        <div class="card-header">Project Settings</div>
+        <div class="card-body">
+            <div class="list-group">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtExportPath">Export Path</label>
+                        <input type="text" class="form-control" id="txtExportPath" placeholder="Export Path"
+                               value="{{ export_path }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idProjectSettingSave">Save</button>
+        </div>
+    </div>
+
+</script>
+
+
+<script id="CNNFImageLoader-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{ definition.name }} Properties</div>
+        <div class="card-body">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px">
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showJSONConfig()">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtStepName">Step Name</label>
+                        <input type="text" class="form-control" id="txtStepName" placeholder="Step Name" readonly
+                               value="{{ definition.name }}">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtStepClass">Step Class</label>
+                        <input type="text" class="form-control" id="txtStepClass" placeholder="Class Name" readonly
+                               value="{{ definition.processor }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="listImageLoaderType">Image Loader Type</label>
+                        <select id="listImageLoaderType" class="form-control">
+                            <option selected value="Choose...">Choose...</option>
+                            <option value="HDF5">HDF5</option>
+                            <option value="Image Directory">Image Directory</option>
+                        </select>
+                    </div>
+                </div>
+                <span id="IL_hff5">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="txtPathhdf5">Path</label>
+                            <input type="text" class="form-control" id="txtPathhdf5" placeholder="/data/data_file.hdf5"
+                                   value="{{ properties.path }}">
+                            <small class="form-text text-muted">
+                                Path of the hdf5 db file, such as /data/vgg16_features.hdf5
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="txtPathhdf5">Output</label>
+                            <input type="text" class="form-control" id="txtOutput" placeholder="db"
+                                   value="{{#if properties.output}}{{properties.output}}{{else}}db{{/if}}">
+                            <small class="form-text text-muted">
+                                Output placeholder for the db object.
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="train_test_split">
+                          <label class="form-check-label" for="train_test_split">
+                            Enable Test/Train Split ( Optional )
+                          </label>
+                        </div>
+                      </div>
+
+                    <span id="train_test_split_section">
+
+                        <div style="width: 100%; height: 15px; border-bottom: 2px dashed #6e0eab; opacity: 1.0; text-align: center;margin-bottom: 20px">
+                            <span style="font-size: 17px; background-color: #FFFFFF;color:#6e0eab ;padding: 0 20px;">
+                                Train/Test Split <!--Padding is optional-->
+                            </span>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="txtLabels">Labels Placeholder</label>
+                                <input type="text" class="form-control" id="txtLabels" placeholder="labels"
+                                       value="{{#if properties.train_test_split.labels}}{{properties.train_test_split.labels}}{{else}}labels{{/if}}">
+                                <small class="form-text text-muted">
+                                    Enter the placeholder for labels
+                                </small>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="numTestPercent">Test Split %</label>
+                                <input type="number" class="form-control" id="numTestPercent" placeholder="25"
+                                       value="{{#if properties.train_test_split.test_percent}}{{properties.train_test_split.test_percent}}{{else}}25{{/if}}">
+                                <small class="form-text text-muted">
+                                    Enter the % of split for test data
+                                </small>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="txtIndex">Split Index Placeholder</label>
+                                <input type="text" class="form-control" id="txtIndex"
+                                       placeholder="train_test_split_index"
+                                       value="{{#if properties.train_test_split.index}}{{properties.train_test_split.index}}{{else}}train_test_split_index{{/if}}">
+                                <small class="form-text text-muted">
+                                    Enter the placeholder for index of test/train dataset. The dataset wil be loaded based on the index value.
+                                </small>
+                            </div>
+                        </div>
+                        </span>
+                </span>
+                <span id="IL_Directory">
+                    <div style="width: 100%; height: 15px; border-bottom: 2px dashed #6e0eab; opacity: 1.0; text-align: center;margin-bottom: 20px">
+                            <span style="font-size: 17px; background-color: #FFFFFF;color:#6e0eab ;padding: 0 20px;">
+                                Input <!--Padding is optional-->
+                            </span>
+                        </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="txtPathImages">Image Folder Path</label>
+                            <input type="text" class="form-control" id="txtPathImages"
+                                   placeholder="/images/<class>/*.png"
+                                   value="{{ properties.path }}">
+                            <small class="form-text text-muted">
+                                Path to the image folder. The structure should be /some_folder/classes/images.png. Supported images types are jpg, jpeg, png, bmp, tif, tiff.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="txtInputDataPlaceHolder">Input Data Placeholder</label>
+                            <input type="text" class="form-control" id="txtInputDataPlaceHolder" placeholder="data" {{#if properties.path}}disabled{{/if}}
+                                   value="{{#if properties.input_data}}{{properties.input_data}}{{else}}data{{/if}}">
+                            <small class="form-text text-muted">
+                                Placeholder name for the input list of images. Use this after custom loader where list of the path of the images are collected for large datasets. This will be ignored if Image Folder Path has been given above.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtInputLabelPlaceHolder">Input Labels Placeholder</label>
+                            <input type="text" class="form-control" id="txtInputLabelPlaceHolder" placeholder="labels" {{#if properties.path}}disabled{{/if}}
+                                   value="{{#if properties.input_labels}}{{properties.input_labels}}{{else}}labels{{/if}}">
+                            <small class="form-text text-muted">
+                                Placeholder name for the labels/target.
+                            </small>
+                        </div>
+                    </div>
+                    <div style="width: 100%; height: 15px; border-bottom: 2px dashed #6e0eab; opacity: 1.0; text-align: center;margin-bottom: 20px">
+                        <span style="font-size: 17px; background-color: #FFFFFF;color:#6e0eab ;padding: 0 20px;">
+                            Output <!--Padding is optional-->
+                        </span>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="txtDataPlaceHolder">Output Data Placeholder</label>
+                            <input type="text" class="form-control" id="txtDataPlaceHolder" placeholder="data"
+                                   value="{{#if properties.data}}{{properties.data}}{{else}}data{{/if}}">
+                            <small class="form-text text-muted">
+                                Placeholder name for the data
+                            </small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtLabelPlaceHolder">Output Labels Placeholder</label>
+                            <input type="text" class="form-control" id="txtLabelPlaceHolder" placeholder="labels"
+                                   value="{{#if properties.labels}}{{properties.labels}}{{else}}labels{{/if}}">
+                            <small class="form-text text-muted">
+                                Placeholder name for the labels/target
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="isStoreHDF5" {{#if
+                                       properties.hdf5}}checked{{/if}}>
+                                <label class="form-check-label" for="shuffle">
+                                    Store in HDF5 file
+                                </label>
+                                <small class="form-text text-muted">
+                                    Store the processed images in hdf5 file.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txthdf5File">Path of hdf5 file</label>
+                            <input type="text" class="form-control" id="txthdf5File" placeholder="/dataset/train.hdf5"
+                                   value="{{properties.hdf5}}" {{#if properties.hdf5}}{{else}}disabled{{/if}}>
+                            <small class="form-text text-muted">
+                                Set the path of the hdf5 file
+                            </small>
+                        </div>
+
+                    </div>
+                    <div style="width: 100%; height: 15px; border-bottom: 2px dashed #6e0eab; opacity: 1.0; text-align: center;margin-bottom: 20px">
+                            <span style="font-size: 17px; background-color: #FFFFFF;color:#6e0eab ;padding: 0 20px;">
+                                Pre-Processing <!--Padding is optional-->
+                            </span>
+                        </div>
+                    <label for="listImageProcessingPipeline">Image Pre-Processor Pipeline</label>
+                    <div class="form-row">
+                        <div class="form-group col-md-11">
+                            <select id="listImageProcessorType" class="form-control">
+                                <option value="Choose..." selected>Choose...</option>
+                                <option value="ImageResize">ImageResize</option>
+                                <option value="ImageToArrayPreprocessor">ImageToArrayPreprocessor</option>
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-1">
+                            <button type="button" class="btn btn-dark" id="idAddImageProcessor">Add</button>
+                        </div>
+                        <small class="form-text text-muted">
+                                Add different Image Pre-Processors available in the framework.
+                        </small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <div class="list-group" style="margin-top: 10px" id="image_pre_processor_list">
+
+                                {{#each properties.pipeline}}
+                                    <a href="#" class="list-group-item list-group-item-action"
+                                       onclick="show_image_pre_processor('{{name}}')">{{name}}</a>
+                                {{/each}}
+                            </div>
+                        </div>
+                    </div>
+                    <div style="width: 100%; height: 15px; border-bottom: 2px dashed #6e0eab; opacity: 1.0; text-align: center;margin-bottom: 20px">
+                        <span style="font-size: 17px; background-color: #FFFFFF;color:#6e0eab ;padding: 0 20px;">
+                            Additional Options <!--Padding is optional-->
+                        </span>
+                    </div>
+
+                </span>
+
+            </form>
+
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idImageLoaderSave">Save</button>
+        </div>
+    </div>
+</script>
+
+<script id="CNNFImageLoader-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">Documentation</div>
+        <div class="card-body">
+            <span style="zoom: 70%">
+                <h5><a id="Image_Loader_0"></a>Image Loader:</h5>
+            <p>This component is used to load the data from various format such as</p>
+            <ul>
+            <li>Raw Images</li>
+            <li>hdf5 data file</li>
+            </ul>
+            <h6><a id="Raw_Images_5"></a>Raw Images:</h6>
+            <p>The folder struncture of the images should be in following format:</p>
+            <p>/images/&lt;classes&gt;/*.jpg</p>
+
+            </span>
+
+        </div>
+    </div>
+
+</script>
+
+
+<script id="CNNFTrainTestSplit-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px">
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showJSONConfig()">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtStepName">Step Name</label>
+                        <input type="text" class="form-control" id="txtStepName" placeholder="Step Name" readonly
+                               value="{{ definition.name }}">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtStepClass">Step Class</label>
+                        <input type="text" class="form-control" id="txtStepClass" placeholder="Class Name" readonly
+                               value="{{ definition.processor }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="numTestSplitSize">Test Split Size</label>
+                        <input type="number" class="form-control" id="numTestSplitSize" placeholder="0.25"
+                               value="{{#if properties.test_size}}{{properties.test_size}}{{else}}0.25{{/if}}">
+                        <small class="form-text text-muted">
+                            Provide the Test Split. Should be a number between 1 and 0. Default is 0.25
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="numValSplitSize">Validation Split Size</label>
+                        <input type="number" class="form-control" id="numValSplitSize" placeholder="0.25"
+                               value="{{#if properties.validation_size}}{{properties.validation_size}}{{else}}0.0{{/if}}">
+                        <small class="form-text text-muted">
+                            Provide the validation Split. Should be a number between 1 and 0. Set this to 0.0 if
+                            validation set is not required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="shuffle" {{#if
+                                   properties.shuffle}}checked{{/if}}>
+                            <label class="form-check-label" for="shuffle">
+                                Shuffle
+                            </label>
+                            <small class="form-text text-muted">
+                                Shuffles the dataset.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="stratify" {{#if
+                                   properties.stratify}}checked{{/if}}>
+                            <label class="form-check-label" for="stratify">
+                                Stratify
+                            </label>
+                            <small class="form-text text-muted">
+                                Enable stratify during split. Enabling this will automatically enable shuffle.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtRandomState">Random State</label>
+                        <input type="number" class="form-control" id="txtRandomState" placeholder="data"
+                               value="{{#if properties.random_state}}{{properties.random_state}}{{else}}0{{/if}}">
+                        <small class="form-text text-muted">
+                            Any value other than 0 will set the Random State value accordingly.
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="labeltonumber" {{#if
+                                   properties.label_to_number}}checked{{/if}}>
+                            <label class="form-check-label" for="labeltonumber">
+                                Convert Label to Number
+                            </label>
+                            <small class="form-text text-muted">
+                                Converts the test label to number values. Uses <b>LabelBinarizer</b> class from
+                                sklearn.preprocessing module.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtDataPlaceHolder">Input Data Placeholder</label>
+                        <input type="text" class="form-control" id="txtDataPlaceHolder" placeholder="data"
+                               value="{{#if properties.data}}{{properties.data}}{{else}}data{{/if}}">
+                        <small class="form-text text-muted">
+                            Placeholder name for the data
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtLabelPlaceHolder">Input Labels Placeholder</label>
+                        <input type="text" class="form-control" id="txtLabelPlaceHolder" placeholder="labels"
+                               value="{{#if properties.labels}}{{properties.labels}}{{else}}labels{{/if}}">
+                        <small class="form-text text-muted">
+                            Placeholder name for the labels/target
+                        </small>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idTrainTestSave">Save</button>
+        </div>
+    </div>
+</script>
+
+<script id="CNNFTrainTestSplit-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Documentation</div>
+        <div class="card-body">
+            <span style="zoom: 70%">
+                <h5><a id="Image_Loader_0"></a>Image Loader:</h5>
+            <p>This component is used to load the data from various format such as</p>
+            <ul>
+            <li>Raw Images</li>
+            <li>hdf5 data file</li>
+            </ul>
+            <h6><a id="Raw_Images_5"></a>Raw Images:</h6>
+            <p>The folder struncture of the images should be in following format:</p>
+            <p>/images/&lt;classes&gt;/*.jpg</p>
+
+            </span>
+
+        </div>
+    </div>
+</script>
+
+<script id="CNNFCustomKerasModel-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px">
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showJSONConfig()">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtStepName">Step Name</label>
+                        <input type="text" class="form-control" id="txtStepName" placeholder="Step Name" readonly
+                               value="{{ definition.name }}">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtStepClass">Step Class</label>
+                        <input type="text" class="form-control" id="txtStepClass" placeholder="Class Name" readonly
+                               value="{{ definition.processor }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="listModelTemplate">Model Template</label>
+                        <select id="listModelTemplate" class="form-control">
+                            <option value="Choose..." selected>Choose...</option>
+                            <option value="LeNet">LeNet</option>
+                            <option value="MiniVGGNet">MiniVGGNet</option>
+                            <option value="ShallowNet">ShallowNet</option>
+                        </select>
+                        <small class="form-text text-muted">
+                            Predefined Model Definition.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="modelText">Model Definition</label>
+                        <textarea class="form-control" id="modelDefinition" rows="10">{{properties.model}}</textarea>
+                        <small class="form-text text-muted">
+                            Define the model here. See documentation for model details.
+                        </small>
+                    </div>
+
+
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtStepName">Input Width</label>
+                        <input type="number" class="form-control" id="txtWidth" placeholder="32"
+                               value="{{#if properties.width}}{{properties.width}}{{else}}32{{/if}}">
+                        <small class="form-text text-muted">
+                            Output width of the image.
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtStepClass">Input Height</label>
+                        <input type="number" class="form-control" id="txtHeight" placeholder="32"
+                               value="{{#if properties.height}}{{properties.height}}{{else}}32{{/if}}">
+                        <small class="form-text text-muted">
+                            Output height of the image.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtStepName">Color Channels</label>
+                        <input type="number" class="form-control" id="numColorChannels" placeholder="3"
+                               value="{{#if properties.color_channel}}{{properties.color_channel}}{{else}}3{{/if}}">
+                        <small class="form-text text-muted">
+                            Enter the number of Color Channels.
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtStepClass">Target Classes</label>
+                        <input type="number" class="form-control" id="numTargetClasses" placeholder="10"
+                               value="{{#if properties.target_classes}}{{properties.target_classes}}{{else}}10{{/if}}">
+                        <small class="form-text text-muted">
+                            Enter the number of target classes.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtPathhdf5">Output</label>
+                        <input type="text" class="form-control" id="txtOutput" placeholder="db"
+                               value="{{#if properties.output}}{{properties.output}}{{else}}model{{/if}}">
+                        <small class="form-text text-muted">
+                            Output placeholder for the db object.
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="chkModelSummary">
+                            <label class="form-check-label" for="chkModelSummary">
+                                Show Model Summary
+                            </label>
+                            <small class="form-text text-muted">
+                                Displays the model summary by calling <b>model.summary()</b> Keras function. This is
+                                useful only during debugging.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idCustomModel">Save</button>
+        </div>
+    </div>
+</script>
+
+<script id="CNNFCustomKerasModel-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Documentation</div>
+        <div class="card-body">
+            <span style="zoom: 70%">
+                <h5><a id="Image_Loader_0"></a>Image Loader:</h5>
+            <p>This component is used to load the data from various format such as</p>
+            <ul>
+            <li>Raw Images</li>
+            <li>hdf5 data file</li>
+            </ul>
+            <h6><a id="Raw_Images_5"></a>Raw Images:</h6>
+            <p>The folder struncture of the images should be in following format:</p>
+            <p>/images/&lt;classes&gt;/*.jpg</p>
+
+            </span>
+
+        </div>
+    </div>
+</script>
+
+<script id="CNNFDefaultOptimization-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px">
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showJSONConfig()">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="txtStepName">Step Name</label>
+                    <input type="text" class="form-control" id="txtStepName" placeholder="Step Name" readonly
+                           value="{{ definition.name }}">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="txtStepClass">Step Class</label>
+                    <input type="text" class="form-control" id="txtStepClass" placeholder="Class Name" readonly
+                           value="{{ definition.processor }}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="listOptimizationAlgorithm">Optimization Algorithm</label>
+                    <select id="listOptimizationAlgorithm" class="form-control">
+                        <option value="Choose..." selected>Choose...</option>
+                        <option value="StochasticGradientDescent">StochasticGradientDescent</option>
+                        <option value="RMSprop">RMSprop</option>
+                    </select>
+                    <small class="form-text text-muted">
+                        Select the appropriate optimization algorithm.
+                    </small>
+                </div>
+            </div>
+            <span id="SGD" style="display: none">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="numLearningRate">Learning Rate</label>
+                            <input type="number" class="form-control" id="numLearningRate" placeholder="0.01"
+                                   value="{{#if properties.optimization.learning_rate}}{{properties.optimization.learning_rate}}{{else}}0.01{{/if}}">
+                            <small class="form-text text-muted">
+                                Set the learning rate for the optimization algorithm.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="numLearningRateDecay">Learning Rate Decay</label>
+                            <input type="number" class="form-control" id="numLearningRateDecay" placeholder="0.01"
+                                   value="{{#if properties.optimization.decay}}{{properties.optimization.decay}}{{else}}0.0{{/if}}">
+                            <small class="form-text text-muted">
+                                Set the learning rate decay for the optimization algorithm. Ignored if value = 0.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="numMomentum">Momentum</label>
+                            <input type="number" class="form-control" id="numMomentum" placeholder="0.9"
+                                   value="{{#if properties.optimization.momentum}}{{properties.optimization.momentum}}{{else}}0.9{{/if}}">
+                            <small class="form-text text-muted">
+                                Set the momentum for the optimization algorithm. Ignored if value = 0.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="chkNesterov">
+                                <label class="form-check-label" for="chkNesterov">
+                                       Nesterov
+                                </label>
+                                <small class="form-text text-muted">
+                                    Set true for Nesterov momentum.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </span>
+            <span id="RMSprop" style="display: none">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="numLearningRateRMS">Learning Rate</label>
+                        <input type="number" class="form-control" id="numLearningRateRMS" placeholder="0.01"
+                               value="{{#if properties.optimization.learning_rate}}{{properties.optimization.learning_rate}}{{else}}0.01{{/if}}">
+                        <small class="form-text text-muted">
+                            Set the learning rate for the optimization algorithm.
+                        </small>
+                    </div>
+                </div>
+            </span>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="listLoss">Loss Function</label>
+                    <select id="listLoss" class="form-control">
+                        <option value="Choose..." selected>Choose...</option>
+                        <option value="CategoricalCrossEntropy">CategoricalCrossEntropy</option>
+                    </select>
+                    <small class="form-text text-muted">
+                        Select the loss function for the Network.
+                    </small>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="txtMetrics">Metrics</label>
+                    <input type="text" class="form-control" id="txtMetrics" placeholder="accuracy"
+                           value="{{#if properties.accuracy}}{{properties.accuracy}}{{else}}accuracy{{/if}}">
+                    <small class="form-text text-muted">
+                        Select the Metrics for model performance.
+                    </small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="txtOutput">Model Placeholder</label>
+                    <input type="text" class="form-control" id="txtOutput" placeholder="db"
+                           value="{{#if properties.model}}{{properties.model}}{{else}}model{{/if}}">
+                    <small class="form-text text-muted">
+                        Input/Output placeholder for the model object. Should be same as it was selected in previous
+                        step.
+                    </small>
+                </div>
+            </div>
+
+            </form>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idOptimizationAlgo">Save</button>
+        </div>
+    </div>
+</script>
+
+<script id="CNNFDefaultOptimization-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Documentation</div>
+        <div class="card-body">
+            <span style="zoom: 70%">
+                <h5><a id="Image_Loader_0"></a>Image Loader:</h5>
+            <p>This component is used to load the data from various format such as</p>
+            <ul>
+            <li>Raw Images</li>
+            <li>hdf5 data file</li>
+            </ul>
+            <h6><a id="Raw_Images_5"></a>Raw Images:</h6>
+            <p>The folder struncture of the images should be in following format:</p>
+            <p>/images/&lt;classes&gt;/*.jpg</p>
+
+            </span>
+
+        </div>
+    </div>
+</script>
+
+<script id="CNNFDefaultTraining-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px">
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showJSONConfig()">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="txtStepName">Step Name</label>
+                    <input type="text" class="form-control" id="txtStepName" placeholder="Step Name" readonly
+                           value="{{ definition.name }}">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="txtStepClass">Step Class</label>
+                    <input type="text" class="form-control" id="txtStepClass" placeholder="Class Name" readonly
+                           value="{{ definition.processor }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="numBatchSize">Batch Size</label>
+                    <input type="number" class="form-control" id="numBatchSize" placeholder="64"
+                           value="{{#if properties.batch_size}}{{properties.batch_size}}{{else}}64{{/if}}">
+                    <small class="form-text text-muted">
+                        Set the training batch size.
+                    </small>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="numVerbose">Verbose</label>
+                    <input type="number" class="form-control" id="numVerbose" placeholder="1"
+                           value="{{#if properties.verbose}}{{properties.verbose}}{{else}}1{{/if}}">
+                    <small class="form-text text-muted">
+                        Set the Verbose level.
+                    </small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="txtModel">Model Placeholder</label>
+                    <input type="text" class="form-control" id="txtModel" placeholder="model"
+                           value="{{#if properties.model}}{{properties.model}}{{else}}model{{/if}}">
+                    <small class="form-text text-muted">
+                        Input placeholder for the model object. Should be same as it was selected in previous
+                        step.
+                    </small>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="txtOutput">Model Output Placeholder</label>
+                    <input type="text" class="form-control" id="txtOutput" placeholder="model_output"
+                           value="{{#if properties.output}}{{properties.output}}{{else}}model_output{{/if}}">
+                    <small class="form-text text-muted">
+                        Output placeholder for the model.
+                    </small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="numEpochs">Epochs</label>
+                    <input type="number" class="form-control" id="numEpochs" placeholder="0"
+                           value="{{properties.epochs}}">
+                    <small class="form-text text-muted">
+                        Override the Global epochs number if needed (This is mostly needed for transfer learning and
+                        Ensemble ).
+                    </small>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="txtModelSavePath">Trained Model Path</label>
+                    <input type="text" class="form-control" id="txtModelSavePath"
+                           placeholder="output/model/shallownet_weights.hdf5"
+                           value="{{properties.save_model}}">
+                    <small class="form-text text-muted">
+                        Save the weights to a specific location once training is complete.
+                    </small>
+                </div>
+            </div>
+            <label for="listCallbackType">Keras Callbacks</label>
+            <div class="form-row">
+                <div class="form-group col-md-11">
+                    <select id="listCallbackType" class="form-control">
+                        <option value="Choose..." selected>Choose...</option>
+                        <option value="LearningRateScheduler">LearningRateScheduler</option>
+                        <option value="BaseLogger">BaseLogger</option>
+                        <option value="ModelCheckpoint">ModelCheckpoint</option>
+                    </select>
+
+                </div>
+                <div class="form-group col-md-1">
+                    <button type="button" class="btn btn-outline-primary" id="idCallbacks">Add</button>
+                </div>
+                <small class="form-text text-muted">
+                    Add different Keras Supported Callbacks.
+                </small>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <div class="list-group" style="margin-top: 10px" id="keras_callbacks">
+
+                        {{#each properties.callbacks}}
+                        <a href="#" class="list-group-item list-group-item-action"
+                           onclick="show_callbacks('{{type}}')">{{type}}</a>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="imageAugmentation">
+                    <label class="form-check-label" for="imageAugmentation">
+                        Enable Image Augmentation ( Optional )
+                    </label>
+                    <small class="form-text text-muted">
+                        The framework uses keras.preprocessing.image.ImageDataGenerator class for data augmentation
+                    </small>
+                </div>
+            </div>
+
+            <span id="image_augmentation_section" style="display: none">
+
+                <div style="width: 100%; height: 15px; border-bottom: 2px dashed #6e0eab; opacity: 1.0; text-align: center;margin-bottom: 20px">
+                    <span style="font-size: 17px; background-color: #FFFFFF;color:#6e0eab ;padding: 0 20px;">
+                        Image Augmentation <!--Padding is optional-->
+                    </span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="chkOptions">
+                            <label class="form-check-label" for="chkOptions">
+                                   Define Augmentation Options
+                            </label>
+                            <small class="form-text text-muted">
+                                Set different Augmentation options.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-8" id="frm_load_augmentation">
+                        <div class="form-check">
+                            <label for="txtLoadAug">Load Augmentation Object</label>
+                            <input type="text" class="form-control" id="txtLoadAug" placeholder="CustomAugmentation"
+                                   value="{{#if properties.augmentation.load_from}}{{properties.augmentation.load_from}}{{else}}CustomAugmentation{{/if}}">
+                            <small class="form-text text-muted">
+                                Load pre-defined augmentation object.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <span id="frm_options">
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="txtAugRotationRange">Rotation Range</label>
+                            <input type="number" class="form-control" id="txtAugRotationRange" placeholder="30"
+                                   value="{{#if properties.augmentation.rotation_range}}{{properties.augmentation.rotation_range}}{{else}}30{{/if}}">
+                            <small class="form-text text-muted">
+                                Rotation Range value. Default is 30.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtAugWidthShiftRange">Width Shift Range</label>
+                            <input type="number" class="form-control" id="txtAugWidthShiftRange" placeholder="0.1"
+                                   value="{{#if properties.augmentation.width_shift_range}}{{properties.augmentation.width_shift_range}}{{else}}0.1{{/if}}">
+                            <small class="form-text text-muted">
+                                Width Shift Range value. Default is 0.1.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtAugHeightShiftRange">Height Shift Range</label>
+                            <input type="number" class="form-control" id="txtAugHeightShiftRange" placeholder="0.1"
+                                   value="{{#if properties.augmentation.height_shift_range}}{{properties.augmentation.height_shift_range}}{{else}}0.1{{/if}}">
+                            <small class="form-text text-muted">
+                                Width Shift Range value. Default is 0.1.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="txtAugShearRange">Shear Range</label>
+                            <input type="number" class="form-control" id="txtAugShearRange" placeholder="0.2"
+                                   value="{{#if properties.augmentation.shear_range}}{{properties.augmentation.shear_range}}{{else}}0.2{{/if}}">
+                            <small class="form-text text-muted">
+                                Shear Range value. Default is 0.2.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtAugZoomRange">Zoom Range</label>
+                            <input type="number" class="form-control" id="txtAugZoomRange" placeholder="0.2"
+                                   value="{{#if properties.augmentation.zoom_range}}{{properties.augmentation.zoom_range}}{{else}}0.2{{/if}}">
+                            <small class="form-text text-muted">
+                                Zoom Range value. Default is 0.2.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="listAugFillMode">Fill Mode</label>
+                            <select id="listAugFillMode" class="form-control">
+                                <option value="Choose..." selected>Choose...</option>
+                                <option value="nearest">nearest</option>
+                            </select>
+                            <small class="form-text text-muted">
+                                Select the value of the Fill Mode.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="chkHorizontalFlip">
+                                <label class="form-check-label" for="chkHorizontalFlip">
+                                       Horizontal Flip
+                                </label>
+                                <small class="form-text text-muted">
+                                    Set true to enable horizontal flipping of images.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="chkVerticalFlip">
+                                <label class="form-check-label" for="chkVerticalFlip">
+                                       Vertical Flip
+                                </label>
+                                <small class="form-text text-muted">
+                                    Set true to enable vertical flipping of images.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="txtSaveTo">Save Object</label>
+                            <input type="text" class="form-control" id="txtSaveTo" placeholder="CustomAugmentation"
+                                   value="{{#if properties.augmentation.save_to}}{{properties.augmentation.save_to}}{{else}}CustomAugmentation{{/if}}">
+                            <small class="form-text text-muted">
+                                Save the augmentation object for later use.
+                            </small>
+                        </div>
+                    </div>
+                </span>
+            </span>
+
+            </form>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn  btn-primary fa-pull-right" id="idTraining">Save</button>
+        </div>
+    </div>
+</script>
+
+<script id="CNNFDefaultTraining-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Documentation</div>
+        <div class="card-body">
+            <span style="zoom: 70%">
+                <h5><a id="Image_Loader_0"></a>Image Loader:</h5>
+            <p>This component is used to load the data from various format such as</p>
+            <ul>
+            <li>Raw Images</li>
+            <li>hdf5 data file</li>
+            </ul>
+            <h6><a id="Raw_Images_5"></a>Raw Images:</h6>
+            <p>The folder struncture of the images should be in following format:</p>
+            <p>/images/&lt;classes&gt;/*.jpg</p>
+
+            </span>
+
+        </div>
+    </div>
+</script>
+
+<script id="CNNFDefaultModelEvaluation-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px">
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showJSONConfig()">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtStepName">Step Name</label>
+                        <input type="text" class="form-control" id="txtStepName" placeholder="Step Name" readonly
+                               value="{{ definition.name }}">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtStepClass">Step Class</label>
+                        <input type="text" class="form-control" id="txtStepClass" placeholder="Class Name" readonly
+                               value="{{ definition.processor }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="numBatchSize">Batch Size</label>
+                        <input type="number" class="form-control" id="numBatchSize" placeholder="64"
+                               value="{{#if properties.batch_size}}{{properties.batch_size}}{{else}}64{{/if}}">
+                        <small class="form-text text-muted">
+                            Set the training batch size.
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtLabels">Labels</label>
+                        <input type="text" class="form-control" id="txtLabels" placeholder="1"
+                               value="{{#if properties.labels}}{{properties.labels}}{{else}}labels{{/if}}">
+                        <small class="form-text text-muted">
+                            Set the placeholder for labels array.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtModel">Model Placeholder</label>
+                        <input type="text" class="form-control" id="txtModel" placeholder="model"
+                               value="{{#if properties.model}}{{properties.model}}{{else}}model{{/if}}">
+                        <small class="form-text text-muted">
+                            Input placeholder for the model object. Should be same as it was selected in previous
+                            step.
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtOutput">Model Output Placeholder</label>
+                        <input type="text" class="form-control" id="txtOutput" placeholder="model_output"
+                               value="{{#if properties.model_output}}{{properties.model_output}}{{else}}model_output{{/if}}">
+                        <small class="form-text text-muted">
+                            Output placeholder for the model.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtPlotLoc">Accuracy/Loss Plot Location</label>
+                        <input type="text" class="form-control" id="txtPlotLoc" placeholder="data"
+                               value="{{#if properties.plot_loc}}{{properties.plot_loc}}{{else}}output/plots/plot.png{{/if}}">
+                        <small class="form-text text-muted">
+                            Location where the plot will be saved. This option is available only when the Model Output
+                            is available.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtModelPath">Load Model Path</label>
+                        <input type="text" class="form-control" id="txtModelPath"
+                               placeholder="output/model/weights.hdf5"
+                               value="{{properties.load_model}}">
+                        <small class="form-text text-muted">
+                            In case model needs to be loaded from file, provide the path of the hdf5 file. Ex -
+                            output/model/weights.hdf5. If this path has been provided then Model and Model Output
+                            Placeholder above will be ignored.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="chkRank5Accuracy">
+                            <label class="form-check-label" for="chkRank5Accuracy">
+                                Rank 5 Accuracy
+                            </label>
+                            <small class="form-text text-muted">
+                                Will calculate both Rank 1 and Rank 5 Accuracy and print them in logs.
+                            </small>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idEvaluation">Save</button>
+        </div>
+    </div>
+</script>
+
+<script id="CNNFDefaultModelEvaluation-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Documentation</div>
+        <div class="card-body">
+            <span style="zoom: 70%">
+                <h5><a id="Image_Loader_0"></a>Image Loader:</h5>
+            <p>This component is used to load the data from various format such as</p>
+            <ul>
+            <li>Raw Images</li>
+            <li>hdf5 data file</li>
+            </ul>
+            <h6><a id="Raw_Images_5"></a>Raw Images:</h6>
+            <p>The folder struncture of the images should be in following format:</p>
+            <p>/images/&lt;classes&gt;/*.jpg</p>
+
+            </span>
+
+        </div>
+    </div>
+</script>
+<script id="CNNFLabel2Number-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            No Properties available.
+        </div>
+    </div>
+</script>
+
+<script id="CNNFLabel2Number-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Documentation</div>
+        <div class="card-body">
+            <span style="zoom: 70%">
+                <h5><a id="Image_Loader_0"></a>Image Loader:</h5>
+            <p>This component is used to load the data from various format such as</p>
+            <ul>
+            <li>Raw Images</li>
+            <li>hdf5 data file</li>
+            </ul>
+            <h6><a id="Raw_Images_5"></a>Raw Images:</h6>
+            <p>The folder struncture of the images should be in following format:</p>
+            <p>/images/&lt;classes&gt;/*.jpg</p>
+
+            </span>
+
+        </div>
+    </div>
+</script>
+
+
+<script id="CNNFDefaultFeatureExtractor-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{ definition.name }} Properties</div>
+        <div class="card-body">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px">
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showJSONConfig()">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtStepName">Step Name</label>
+                        <input type="text" class="form-control" id="txtStepName" placeholder="Step Name" readonly
+                               value="{{ definition.name }}">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtStepClass">Step Class</label>
+                        <input type="text" class="form-control" id="txtStepClass" placeholder="Class Name" readonly
+                               value="{{ definition.processor }}">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="listPreTrainedModel">Pre-Trained Model</label>
+                        <select id="listPreTrainedModel" class="form-control">
+                            <option selected value="Choose...">Choose...</option>
+                            <option value="VGG16">VGG16</option>
+                            <option value="VGG19">VGG19</option>
+                            <option value="InceptionV3">InceptionV3</option>
+                            <option value="Xception">Xception</option>
+                            <option value="ResNet50">ResNet50</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="width: 100%; height: 15px; border-bottom: 2px dashed #6e0eab; opacity: 1.0; text-align: center;margin-bottom: 20px">
+                    <span style="font-size: 17px; background-color: #FFFFFF;color:#6e0eab ;padding: 0 20px;">
+                        Image Loading Properties <!--Padding is optional-->
+                    </span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="listImageLoaderType">Image Loader Type</label>
+                        <select id="listImageLoaderType" class="form-control">
+                            <option selected value="Choose...">Choose...</option>
+                            <option value="Image Directory">Image Directory</option>
+                        </select>
+                    </div>
+                </div>
+
+                <span id="IL_Directory">
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="txtPathImages">Image Folder Path</label>
+                            <input type="text" class="form-control" id="txtPathImages"
+                                   placeholder="/images/<class>/*.png"
+                                   value="{{ properties.image_loading.path }}">
+                            <small class="form-text text-muted">
+                                Path to the image folder. The structure should be /some_folder/classes/images.png. Supported images types are jpg, jpeg, png, bmp, tif, tiff.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="numBatchSize">Batch Size</label>
+                            <input type="number" class="form-control" id="numBatchSize" placeholder="32"
+                                   value="{{#if properties.image_loading.batch_size}}{{properties.image_loading.batch_size}}{{else}}32{{/if}}">
+                            <small class="form-text text-muted">
+                                Set the processing mode to batch
+                            </small>
+                        </div>
+                    </div>
+                    <label for="listImageProcessingPipeline">Image Pre-Processor Pipeline</label>
+                    <div class="form-row">
+                        <div class="form-group col-md-11">
+                            <select id="listImageProcessorType" class="form-control">
+                                <option value="Choose..." selected>Choose...</option>
+                                <option value="ImageResize">ImageResize</option>
+                                <option value="ImageToArrayPreprocessor">ImageToArrayPreprocessor</option>
+                            </select>
+
+                        </div>
+                        <div class="form-group col-md-1">
+                            <button type="button" class="btn btn-dark" id="idAddImageProcessor">Add</button>
+                        </div>
+                        <small class="form-text text-muted">
+                                Add different Image Pre-Processors available in the framework.
+                        </small>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <div class="list-group" style="margin-top: 10px" id="image_pre_processor_list">
+
+                                {{#each properties.image_loading.pipeline}}
+                                    <a href="#" class="list-group-item list-group-item-action"
+                                       onclick="show_image_pre_processor_in_feature_extractor('{{name}}')">{{name}}</a>
+                                {{/each}}
+                            </div>
+                        </div>
+                    </div>
+                </span>
+                <div style="width: 100%; height: 15px; border-bottom: 2px dashed #6e0eab; opacity: 1.0; text-align: center;margin-bottom: 20px">
+                    <span style="font-size: 17px; background-color: #FFFFFF;color:#6e0eab ;padding: 0 20px;">
+                        Image Store Properties <!--Padding is optional-->
+                    </span>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="txtOutputPathImages">Output Features Path</label>
+                        <input type="text" class="form-control" id="txtOutputPathImages"
+                               placeholder="data/vgg16_features.hdf5"
+                               value="{{ properties.image_store.output }}">
+                        <small class="form-text text-muted">
+                            Path to the output features.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtOutputKey">Output Key</label>
+                        <input type="text" class="form-control" id="txtOutputKey"
+                               placeholder="features"
+                               value="{{#if properties.image_store.key}}{{properties.image_store.key}}{{else}}features{{/if}}">
+                        <small class="form-text text-muted">
+                            Key of the feature variable in the output.
+                        </small>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtBufferSize">Buffer Size</label>
+                        <input type="number" class="form-control" id="txtBufferSize"
+                               placeholder="1000"
+                               value="{{#if properties.image_store.buffer_size}}{{properties.image_store.buffer_size}}{{else}}1000{{/if}}">
+                        <small class="form-text text-muted">
+                            hdf5 buffer size.
+                        </small>
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idImageLoaderSave">Save</button>
+        </div>
+    </div>
+</script>
+
+<script id="CNNFDefaultFeatureExtractor-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">Documentation</div>
+        <div class="card-body">
+            <span style="zoom: 70%">
+                <h5><a id="Image_Loader_0"></a>Image Loader:</h5>
+            <p>This component is used to load the data from various format such as</p>
+            <ul>
+            <li>Raw Images</li>
+            <li>hdf5 data file</li>
+            </ul>
+            <h6><a id="Raw_Images_5"></a>Raw Images:</h6>
+            <p>The folder struncture of the images should be in following format:</p>
+            <p>/images/&lt;classes&gt;/*.jpg</p>
+
+            </span>
+
+        </div>
+    </div>
+
+</script>
+
+<script id="Custom-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px">
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showJSONConfig()">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="txtStepName">Step Name</label>
+                    <input type="text" class="form-control" id="txtStepName" placeholder="Step Name" readonly
+                           value="{{ definition.name }}">
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="txtStepClassName">Custom Class Name</label>
+                    <input type="text" class="form-control" id="txtStepClassName" placeholder="Custom Class Name">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <label for="txtStepClass">Custom Class</label>
+                    <input type="text" class="form-control" id="txtStepClass" placeholder="Enter Class Name" readonly
+                           value="{{ definition.processor }}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <div id="jsoneditor_custom" style="width: 100%; height:500px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idCustomEditorSave">Save</button>
+        </div>
+    </div>
+</script>
+
+<script id="Custom-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{ definition.name }} Code</div>
+        <div class="card-body">
+            <div id="code_editor" style="height:630px;width: 100%;border: 1px solid #6e0eab;margin-bottom: 13px">from
+                utils.parents import Step
+
+                @Step.register
+                class CustomFunction(Step):
+
+                def __init__(self):
+                pass
+
+                def process(self, global_properties={}, properties={}, container={}):
+                pass
+            </div>
+
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idCustomCodeEditorSave">Save</button>
+        </div>
+    </div>
+</script>
+
+
+<script id="Start-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">Starting Code</div>
+        <div class="card-body">
+            <div id="code_editor" style="height:630px;width: 100%;border: 1px solid #6e0eab;margin-bottom: 13px">from
+                core.process_executor import DeepLearningFrameworkAutomation
+                import json
+
+                with open("config.json", "r") as read_file:
+                config = json.load(read_file)
+
+                framework = DeepLearningFrameworkAutomation(config=config, container={})
+                framework.execute()
+            </div>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idStartEditorSave">Save</button>
+        </div>
+    </div>
+</script>
+
+<script id="Start-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">Start Documentation</div>
+        <div class="card-body">
+            <span style="zoom: 70%">
+                <h5><a id="Image_Loader_0"></a>Image Loader:</h5>
+                <p>This component is used to load the data from various format such as</p>
+                <ul>
+                <li>Raw Images</li>
+                <li>hdf5 data file</li>
+                </ul>
+                <h6><a id="Raw_Images_5"></a>Raw Images:</h6>
+                <p>The folder struncture of the images should be in following format:</p>
+                <p>/images/&lt;classes&gt;/*.jpg</p>
+            </span>
+        </div>
+    </div>
+</script>
+
+<script id="CNNFTransferLearning-template-property" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Properties</div>
+        <div class="card-body">
+            <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups" style="margin-bottom: 10px">
+                <div class="btn-group" role="group" aria-label="Third group">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="showJSONConfig()">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+                </div>
+            </div>
+            <form>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="txtStepName">Step Name</label>
+                        <input type="text" class="form-control" id="txtStepName" placeholder="Step Name" readonly
+                               value="{{ definition.name }}">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="txtStepClass">Step Class</label>
+                        <input type="text" class="form-control" id="txtStepClass" placeholder="Class Name" readonly
+                               value="{{ definition.processor }}">
+                    </div>
+                </div>
+                <span id="generic" style="display: none">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="listModelTemplate">Model Template</label>
+                            <select id="listModelTemplate" class="form-control">
+                                <option value="Choose..." selected>Choose...</option>
+                                <option value="1_FC_layer">1_FC_layer</option>
+                            </select>
+                            <small class="form-text text-muted">
+                                Predefined FC Model Definition.
+                            </small>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="modelDefinition">Model Definition</label>
+                            <textarea class="form-control" id="modelDefinition"
+                                      rows="5">{{properties.model}}</textarea>
+                            <small class="form-text text-muted">
+                                Define the model here. See documentation for model details.
+                            </small>
+                        </div>
+                    </div>
+                     <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="listPreTrainedModel">Pre-Trained Model</label>
+                            <select id="listPreTrainedModel" class="form-control">
+                                <option selected value="Choose...">Choose...</option>
+                                <option value="VGG16">VGG16</option>
+                                <option value="VGG19">VGG19</option>
+                                <option value="InceptionV3">InceptionV3</option>
+                                <option value="Xception">Xception</option>
+                                <option value="ResNet50">ResNet50</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="txtOutputModel">Output Placeholder</label>
+                            <input type="text" class="form-control" id="txtOutputModel" placeholder="model"
+                                   value="{{#if properties.model}}{{properties.model}}{{else}}model{{/if}}">
+                            <small class="form-text text-muted">
+                                Input placeholder for the model object. Should be same as it was selected in previous
+                                step.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtBaseModelOutput">Base Model Output Placeholder</label>
+                            <input type="text" class="form-control" id="txtBaseModelOutput" placeholder="model_output"
+                                   value="{{#if properties.base_model}}{{properties.base_model}}{{else}}base_model{{/if}}">
+                            <small class="form-text text-muted">
+                                Output placeholder for the model.
+                            </small>
+                        </div>
+                    </div>
+                </span>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="chkUnfreezeLayers">
+                            <label class="form-check-label" for="chkUnfreezeLayers">
+                                Unfreeze Layers
+                            </label>
+                            <small class="form-text text-muted">
+                                Unfreeze Layers needed after warm-up training of the FC Layers.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <span id="frm_unfreeze_layer" style="display:none">
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="txtUnfreezeFrom">Output Placeholder</label>
+                            <input type="number" class="form-control" id="txtUnfreezeFrom" placeholder="model"
+                                   value="{{#if properties.unfreeze_from}}{{properties.unfreeze_from}}{{else}}15{{/if}}">
+                            <small class="form-text text-muted">
+                                From the layer the back-propagation will start updating the weights.
+                            </small>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="txtBaseModelOutput1">Base Model Output Placeholder</label>
+                            <input type="text" class="form-control" id="txtBaseModelOutput1" placeholder="model_output"
+                                   value="{{#if properties.base_model}}{{properties.base_model}}{{else}}base_model{{/if}}">
+                            <small class="form-text text-muted">
+                                Output placeholder for the model.
+                            </small>
+                        </div>
+                    </div>
+                </span>
+            </form>
+        </div>
+        <div class="card-footer">
+            <button type="button" class="btn btn-primary fa-pull-right" id="idTransferLearning">Save</button>
+        </div>
+    </div>
+</script>
+
+<script id="CNNFTransferLearning-template-action" type="text/x-handlebars-template">
+    <div class="card">
+        <div class="card-header">{{definition.name}} Documentation</div>
+        <div class="card-body">
+            <span style="zoom: 70%">
+                <h5><a id="Image_Loader_0"></a>Image Loader:</h5>
+            <p>This component is used to load the data from various format such as</p>
+            <ul>
+            <li>Raw Images</li>
+            <li>hdf5 data file</li>
+            </ul>
+            <h6><a id="Raw_Images_5"></a>Raw Images:</h6>
+            <p>The folder struncture of the images should be in following format:</p>
+            <p>/images/&lt;classes&gt;/*.jpg</p>
+
+            </span>
+
+        </div>
+    </div>
+</script>
+
+{% endraw %}
+
+</body>
+</html>
